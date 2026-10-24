@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "watermark": {"author": "我密码呢", "mark": "wmmn"},
+  "source": {"provider": "host_media_handle", "source_hash": "sha256:example", "duration_sec": 30},
+  "contact_sheet": {
+    "path": "evidence_contact_sheet.jpg",
+    "width": 1080,
+    "height": 274,
+    "sha256": "example"
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start_sec": 0,
+      "end_sec": 5,
+      "frames": [
+        {"role": "start", "time_sec": 0.25, "timecode": "00:00:00.250", "path": "frames/shot_0001_start.jpg", "sha256": "example", "width": 1280, "height": 766, "watermark": "wmmn · 我密码呢"},
+        {"role": "middle", "time_sec": 2.5, "timecode": "00:00:02.500", "path": "frames/shot_0001_middle.jpg", "sha256": "example", "width": 1280, "height": 766, "watermark": "wmmn · 我密码呢"},
+        {"role": "end", "time_sec": 4.75, "timecode": "00:00:04.750", "path": "frames/shot_0001_end.jpg", "sha256": "example", "width": 1280, "height": 766, "watermark": "wmmn · 我密码呢"}
+      ]
+    }
+  ],
+  "limitations": ["证据帧用于追溯镜头观察，不替代完整视频和人工复核。"]
+}

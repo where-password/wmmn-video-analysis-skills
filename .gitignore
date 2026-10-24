@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.deps/
+dist/
+outputs/
+benchmark-output/
+evidence/
+.DS_Store

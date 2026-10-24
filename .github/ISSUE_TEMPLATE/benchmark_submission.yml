@@ -1,0 +1,44 @@
+name: Benchmark sample submission
+description: Submit a licensed, human-labeled benchmark case
+title: "[Benchmark] "
+labels: ["benchmark", "needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: "Community cases are provisional until reviewed. Automated predictions cannot be used as ground truth."
+  - type: input
+    id: case_id
+    attributes:
+      label: Proposed case ID
+    validations:
+      required: true
+  - type: textarea
+    id: domain
+    attributes:
+      label: Domain and video characteristics
+      description: Domain, duration, aspect ratio, resolution, codec, compression, and source type.
+    validations:
+      required: true
+  - type: textarea
+    id: labels
+    attributes:
+      label: Human labels
+      description: Cut times, camera classes, and transition classes.
+    validations:
+      required: true
+  - type: textarea
+    id: authorization
+    attributes:
+      label: Media authorization
+      description: Explain why the sample may be published or why only derived evidence frames/results are shared.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: The labels were created manually and are not copied from the Skill output.
+          required: true
+        - label: The submission contains no credentials, private URLs, or personal data.
+          required: true

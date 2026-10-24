@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "id": "real_clip_01_base",
+      "group_id": "real_clip_01",
+      "variant": "base",
+      "scan_json": "../runs/real_clip_01/quick_scan.json",
+      "mechanics_json": "../runs/real_clip_01/mechanics.json",
+      "metadata": {"width": 1920, "height": 1080, "codec": "h264", "crf": 18},
+      "ground_truth": {
+        "cuts": [3.433, 5.667],
+        "shots": [
+          {"id": 1, "camera": "static", "transition_in": "opening"},
+          {"id": 2, "camera": "horizontal", "transition_in": "hard_cut"},
+          {"id": 3, "camera": "static", "transition_in": "hard_cut"}
+        ]
+      }
+    }
+  ]
+}

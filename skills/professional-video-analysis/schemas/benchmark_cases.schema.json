@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/benchmark_cases.schema.json",
+  "title": "Professional Video Analysis Benchmark Cases",
+  "type": "object",
+  "required": ["schema_version", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "scan_json", "ground_truth"],
+        "properties": {
+          "id": {"type": "string"},
+          "group_id": {"type": "string"},
+          "variant": {"type": "string"},
+          "scan_json": {"type": "string"},
+          "mechanics_json": {"type": ["string", "null"]},
+          "metadata": {"type": "object", "additionalProperties": true},
+          "ground_truth": {
+            "type": "object",
+            "required": ["cuts", "shots"],
+            "properties": {
+              "cuts": {"type": "array", "items": {"type": "number", "minimum": 0}},
+              "shots": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id"],
+                  "properties": {
+                    "id": {"type": "integer", "minimum": 1},
+                    "camera": {"type": "string"},
+                    "transition_in": {"type": "string"}
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

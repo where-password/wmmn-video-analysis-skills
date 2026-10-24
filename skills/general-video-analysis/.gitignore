@@ -1,0 +1,12 @@
+.deps/
+.venv/
+__pycache__/
+*.pyc
+outputs/
+workspace/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.m4a

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/context.schema.json",
+  "title": "Professional Video Analysis Context",
+  "type": "object",
+  "required": ["domain", "shots"],
+  "properties": {
+    "domain": {"enum": ["comic_drama", "teaching", "other", "unknown"]},
+    "goal": {"type": ["string", "null"]},
+    "target_duration_sec": {"type": ["number", "null"], "minimum": 0},
+    "aspect_ratio": {"type": ["string", "null"]},
+    "available_assets": {"type": "array", "items": {"type": "string"}},
+    "available_tools": {"type": "array", "items": {"type": "string"}},
+    "workflow_constraints": {"type": "array", "items": {"type": "string"}},
+    "observations": {"type": "object", "additionalProperties": true},
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "integer", "minimum": 1},
+          "scene": {"type": ["string", "null"]},
+          "characters": {
+            "oneOf": [
+              {"type": "array", "items": {"type": "string"}},
+              {"type": "string"},
+              {"type": "null"}
+            ]
+          },
+          "action": {"type": ["string", "null"]},
+          "shot_size": {"type": ["string", "null"]},
+          "camera": {"type": ["string", "null"]},
+          "camera_confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+          "transition": {"type": ["string", "null"]},
+          "transition_confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+          "first_frame": {"type": ["string", "null"]},
+          "last_frame": {"type": ["string", "null"]},
+          "image_prompt": {"type": ["string", "null"]},
+          "tool_prompt": {"type": ["string", "null"]},
+          "motion_prompt": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

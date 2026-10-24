@@ -1,0 +1,14 @@
+{
+  "media_path": "media/video.mp4",
+  "provider": "browser_devtools",
+  "source_url": "https://example.com/video/123",
+  "source_hash": "sha256:...",
+  "duration_sec": 60.27,
+  "has_audio": true,
+  "limitations": [
+    "Source was acquired by the host browser adapter"
+  ],
+  "created_at": "2026-10-24T00:00:00+08:00"
+}
+
+

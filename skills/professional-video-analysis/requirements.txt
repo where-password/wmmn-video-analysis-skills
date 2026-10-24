@@ -1,0 +1,6 @@
+# The base report builder uses only the Python standard library.
+# media_mechanics.py and context validation use these packages.
+numpy>=1.24.0
+Pillow>=10.0.0
+imageio-ffmpeg>=0.5.1
+jsonschema>=4.20.0

@@ -1,0 +1,551 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "watermark": {
+    "author": "我密码呢",
+    "mark": "wmmn"
+  },
+  "domain": "comic_drama",
+  "source": {
+    "goal": "拆解并规划复刻一条约 60 秒漫剧，首批先拆开头约 25 秒",
+    "scan_schema_version": "1.0",
+    "duration_sec": 60,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "draft": {
+    "stage": "first_pass",
+    "label": "逆推草稿",
+    "handoff_ready": true,
+    "handoff_ready_reason": "语义观察和时间码证据帧均已提供",
+    "note": "这是可供下一模型或工具继续深化的第一版拆解，不是最终成片方案。"
+  },
+  "batch": {
+    "batch_index": 1,
+    "batch_start": 1,
+    "batch_end": 5,
+    "batch_shot_count": 5,
+    "total_shots_detected": 12,
+    "previous_shots_est": 0,
+    "remaining_shots_est": 7,
+    "semantic_ready_shots": 5,
+    "semantic_coverage": 1.0,
+    "review_required_count": 1,
+    "awaiting_observation_count": 0,
+    "detail_mode": "semantic",
+    "covered_start_sec": 0.0,
+    "covered_end_sec": 25.0,
+    "estimated": true
+  },
+  "analysis_anchors": {
+    "first_transition": {
+      "time_sec": 5,
+      "type": "hard_cut",
+      "label": "硬切",
+      "confidence": 0.9,
+      "evidence": "measured_visual_transition"
+    },
+    "first_camera_movement": {
+      "shot_id": 2,
+      "time_sec": 6.25,
+      "type": "apparent_zoom_in",
+      "label": "画面前景扩张，疑似推近（不能区分变焦与物理推进）",
+      "confidence": 0.72
+    },
+    "minimal_first_unit": {
+      "start_sec": 0.0,
+      "end_sec": 5,
+      "label": "先看开场到首个转场的最小分析单元"
+    }
+  },
+  "verdict": {
+    "status": "structurally_feasible",
+    "headline": "结构大概能拆，但本批有 1 个镜头存在切分或运镜冲突；需要先复核，不能直接当作单一生成镜头。",
+    "scope": "structure_and_production_plan",
+    "can_reuse": [
+      "镜头数量与切点节奏",
+      "每个镜头的时长与先后顺序",
+      "联系表提供的视觉抽样"
+    ],
+    "cannot_guarantee": [
+      "幽默、网感、个人风格和传播效果",
+      "没有领域上下文时的内容正确性",
+      "未经宿主观察确认的运镜、转场和画面语义"
+    ]
+  },
+  "shot_plan": [
+    {
+      "id": 1,
+      "start_sec": 0.0,
+      "end_sec": 5.0,
+      "duration_sec": 5.0,
+      "scene": "昏暗房间，桌面上有一台亮着的显示器",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "从屏幕后探出头",
+      "shot_size": "中景",
+      "camera": "固定",
+      "transition": "开场",
+      "first_frame": "角色完全躲在屏幕后",
+      "last_frame": "角色露出半张脸",
+      "image_prompt": "昏暗房间，蓝发角色从显示器后探出半张脸，中景，屏幕冷光，人物为视觉中心。",
+      "tool_prompt": "昏暗房间，蓝发角色从屏幕后探头，中景，冷色屏幕光，真实角色运动。",
+      "motion_prompt": "开拍即探头，从屏幕后缓慢露出半张脸，最后停住，镜头固定。",
+      "prompt_source": "host",
+      "feasibility": {
+        "status": "draft_ready",
+        "prompt_status": "draft_ready",
+        "warnings": []
+      },
+      "camera_source": "host_observation",
+      "camera_confidence": null,
+      "camera_measurement_label": "画面基本固定",
+      "camera_measurement_type": "static",
+      "camera_measurement_confidence": 0.91,
+      "transition_source": "host_observation",
+      "transition_confidence": null,
+      "observed_fields": [
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame"
+      ],
+      "missing_fields": [],
+      "status": "observed"
+    },
+    {
+      "id": 2,
+      "start_sec": 5.0,
+      "end_sec": 10.0,
+      "duration_sec": 5.0,
+      "scene": "同一房间，桌面出现一块饼干",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "双手捧起饼干",
+      "shot_size": "中近景",
+      "camera": "缓推",
+      "transition": "硬切",
+      "first_frame": "角色盯着饼干",
+      "last_frame": "角色把饼干捧到胸前",
+      "image_prompt": "蓝发角色双手捧起桌上的饼干，中近景，缓推构图，屏幕光照亮侧脸。",
+      "tool_prompt": "蓝发角色捧起饼干，中近景，镜头缓慢推进，真实手部动作。",
+      "motion_prompt": "镜头缓慢向前，角色双手从桌面抬起并捧住饼干。",
+      "prompt_source": "host",
+      "feasibility": {
+        "status": "draft_ready",
+        "prompt_status": "draft_ready",
+        "warnings": []
+      },
+      "camera_source": "host_observation",
+      "camera_confidence": null,
+      "camera_measurement_label": "画面前景扩张，疑似推近（不能区分变焦与物理推进）",
+      "camera_measurement_type": "apparent_zoom_in",
+      "camera_measurement_confidence": 0.72,
+      "transition_source": "host_observation",
+      "transition_confidence": null,
+      "observed_fields": [
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame"
+      ],
+      "missing_fields": [],
+      "status": "observed"
+    },
+    {
+      "id": 3,
+      "start_sec": 10.0,
+      "end_sec": 15.0,
+      "duration_sec": 5.0,
+      "scene": "同一房间，饼干靠近嘴边",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "咬住饼干",
+      "shot_size": "近景",
+      "camera": "固定",
+      "transition": "硬切",
+      "first_frame": "饼干靠近嘴边",
+      "last_frame": "角色咬住饼干",
+      "image_prompt": "蓝发角色咬住饼干，近景，屏幕冷光，表情专注。",
+      "tool_prompt": "蓝发角色咬住饼干，近景，固定机位，真实嘴部动作。",
+      "motion_prompt": "角色把饼干送到嘴边并咬下，头部轻微前倾。",
+      "prompt_source": "host",
+      "feasibility": {
+        "status": "review_required",
+        "prompt_status": "needs_resplit",
+        "warnings": [
+          {
+            "code": "camera_source_conflict",
+            "message": "宿主运镜判断与画面运动测量不一致；请复核后再使用运镜描述。"
+          }
+        ]
+      },
+      "camera_source": "host_observation",
+      "camera_confidence": null,
+      "camera_measurement_label": "画面整体向左平移（疑似横摇或横移）",
+      "camera_measurement_type": "horizontal",
+      "camera_measurement_confidence": 0.68,
+      "transition_source": "host_observation",
+      "transition_confidence": null,
+      "observed_fields": [
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame"
+      ],
+      "missing_fields": [],
+      "status": "observed"
+    },
+    {
+      "id": 4,
+      "start_sec": 15.0,
+      "end_sec": 20.0,
+      "duration_sec": 5.0,
+      "scene": "同一房间，角色表情变化",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "咬出缺口后得意",
+      "shot_size": "特写",
+      "camera": "固定",
+      "transition": "硬切",
+      "first_frame": "饼干完整",
+      "last_frame": "饼干出现缺口，角色得意",
+      "image_prompt": "蓝发角色咬出缺口后得意，特写，屏幕冷光，表情清晰。",
+      "tool_prompt": "蓝发角色咬出饼干缺口后露出得意表情，特写，固定机位。",
+      "motion_prompt": "角色咬下后嘴角上扬，眼睛看向镜头，动作停住。",
+      "prompt_source": "host",
+      "feasibility": {
+        "status": "draft_ready",
+        "prompt_status": "draft_ready",
+        "warnings": []
+      },
+      "camera_source": "host_observation",
+      "camera_confidence": null,
+      "camera_measurement_label": "画面基本固定",
+      "camera_measurement_type": "static",
+      "camera_measurement_confidence": 0.93,
+      "transition_source": "host_observation",
+      "transition_confidence": null,
+      "observed_fields": [
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame"
+      ],
+      "missing_fields": [],
+      "status": "observed"
+    },
+    {
+      "id": 5,
+      "start_sec": 20.0,
+      "end_sec": 25.0,
+      "duration_sec": 5.0,
+      "scene": "同一房间，角色突然紧张",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "被抓包后瞪眼脸红",
+      "shot_size": "近景",
+      "camera": "固定",
+      "transition": "闪白后硬切",
+      "first_frame": "角色停顿",
+      "last_frame": "角色瞪眼脸红",
+      "image_prompt": "蓝发角色被抓包后瞪眼脸红，近景，屏幕冷光，情绪转折。",
+      "tool_prompt": "蓝发角色突然瞪眼脸红，近景，固定机位，情绪从停顿转为紧张。",
+      "motion_prompt": "角色先停住，随后眼睛睁大、脸颊泛红，尾巴竖起。",
+      "prompt_source": "host",
+      "feasibility": {
+        "status": "draft_ready",
+        "prompt_status": "draft_ready",
+        "warnings": []
+      },
+      "camera_source": "host_observation",
+      "camera_confidence": null,
+      "camera_measurement_label": "画面基本固定",
+      "camera_measurement_type": "static",
+      "camera_measurement_confidence": 0.92,
+      "transition_source": "host_observation",
+      "transition_confidence": null,
+      "observed_fields": [
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame"
+      ],
+      "missing_fields": [],
+      "status": "observed"
+    }
+  ],
+  "remaining_segments": [
+    {
+      "shot_range": "6-12",
+      "shot_count": 7,
+      "start_sec": 25.0,
+      "end_sec": 60.0,
+      "estimated_duration_sec": 35.0,
+      "median_shot_sec": 5.0,
+      "rhythm_hint": "大概偏稳，镜头较长",
+      "status": "estimated_structure"
+    }
+  ],
+  "production_plan": [
+    {
+      "step": "锁定参考结构",
+      "action": "按通用扫描的镜头表建立时间线、时长和切点清单。",
+      "owner": "host"
+    },
+    {
+      "step": "角色身份锁",
+      "action": "先确认角色主锚点、服装、场景和道具的唯一权威版本，再开始镜头生成。",
+      "owner": "human"
+    },
+    {
+      "step": "准备素材",
+      "action": "准备角色、场景、道具或屏幕素材；没有素材时只输出结构方案。",
+      "owner": "human"
+    },
+    {
+      "step": "设计镜头方案",
+      "action": "为每个镜头补全景别、运镜、动作、转场和首尾帧；未观察到的字段不能用猜测填充。",
+      "owner": "host"
+    },
+    {
+      "step": "制作关键帧",
+      "action": "按镜头方案生成并逐张验收；角色资产必须绑定身份锚点。",
+      "owner": "host"
+    },
+    {
+      "step": "生成与剪辑",
+      "action": "按镜头时长和转场方案生成视频，再做配音、字幕、音效和剪辑。",
+      "owner": "host"
+    },
+    {
+      "step": "质量复核",
+      "action": "检查角色一致性、轴线、动作衔接、首尾帧、字幕安全和最终时长。",
+      "owner": "host"
+    }
+  ],
+  "prompt_pack": {
+    "domain": "comic_drama",
+    "items": [
+      {
+        "shot_id": 1,
+        "prompt_status": "draft_ready",
+        "image_prompt": "昏暗房间，蓝发角色从显示器后探出半张脸，中景，屏幕冷光，人物为视觉中心。",
+        "tool_prompt": "昏暗房间，蓝发角色从屏幕后探头，中景，冷色屏幕光，真实角色运动。",
+        "motion_prompt": "开拍即探头，从屏幕后缓慢露出半张脸，最后停住，镜头固定。",
+        "camera": "固定",
+        "camera_confidence": null,
+        "transition": "开场",
+        "transition_confidence": null,
+        "feasibility": {
+          "status": "draft_ready",
+          "prompt_status": "draft_ready",
+          "warnings": []
+        },
+        "status": "observed"
+      },
+      {
+        "shot_id": 2,
+        "prompt_status": "draft_ready",
+        "image_prompt": "蓝发角色双手捧起桌上的饼干，中近景，缓推构图，屏幕光照亮侧脸。",
+        "tool_prompt": "蓝发角色捧起饼干，中近景，镜头缓慢推进，真实手部动作。",
+        "motion_prompt": "镜头缓慢向前，角色双手从桌面抬起并捧住饼干。",
+        "camera": "缓推",
+        "camera_confidence": null,
+        "transition": "硬切",
+        "transition_confidence": null,
+        "feasibility": {
+          "status": "draft_ready",
+          "prompt_status": "draft_ready",
+          "warnings": []
+        },
+        "status": "observed"
+      },
+      {
+        "shot_id": 3,
+        "prompt_status": "needs_resplit",
+        "blocked_reason": "宿主运镜判断与画面运动测量不一致；请复核后再使用运镜描述。",
+        "camera": "固定",
+        "transition": "硬切",
+        "feasibility": {
+          "status": "review_required",
+          "prompt_status": "needs_resplit",
+          "warnings": [
+            {
+              "code": "camera_source_conflict",
+              "message": "宿主运镜判断与画面运动测量不一致；请复核后再使用运镜描述。"
+            }
+          ]
+        }
+      },
+      {
+        "shot_id": 4,
+        "prompt_status": "draft_ready",
+        "image_prompt": "蓝发角色咬出缺口后得意，特写，屏幕冷光，表情清晰。",
+        "tool_prompt": "蓝发角色咬出饼干缺口后露出得意表情，特写，固定机位。",
+        "motion_prompt": "角色咬下后嘴角上扬，眼睛看向镜头，动作停住。",
+        "camera": "固定",
+        "camera_confidence": null,
+        "transition": "硬切",
+        "transition_confidence": null,
+        "feasibility": {
+          "status": "draft_ready",
+          "prompt_status": "draft_ready",
+          "warnings": []
+        },
+        "status": "observed"
+      },
+      {
+        "shot_id": 5,
+        "prompt_status": "draft_ready",
+        "image_prompt": "蓝发角色被抓包后瞪眼脸红，近景，屏幕冷光，情绪转折。",
+        "tool_prompt": "蓝发角色突然瞪眼脸红，近景，固定机位，情绪从停顿转为紧张。",
+        "motion_prompt": "角色先停住，随后眼睛睁大、脸颊泛红，尾巴竖起。",
+        "camera": "固定",
+        "camera_confidence": null,
+        "transition": "闪白后硬切",
+        "transition_confidence": null,
+        "feasibility": {
+          "status": "draft_ready",
+          "prompt_status": "draft_ready",
+          "warnings": []
+        },
+        "status": "observed"
+      }
+    ],
+    "notice": "以下提示词是基于参考视频的逆向拆解草案，仅用于分析原视频的镜头构成。用于自己的作品时，请替换为自有角色、场景和品牌资产，并根据目标工具合理优化；不保证复刻原片。",
+    "tool_notes": {
+      "image_generation": "按目标图片模型的语法重排画面锚点、动作起点、景别、构图和光线。",
+      "video_generation": "按目标视频模型的时长和运动约束重排动作起止、镜头运动和连续性要求。",
+      "traditional_editing": "直接使用时间线、切点、景别、运镜和素材需求。"
+    },
+    "image_prompt_template": "角色锚点 + 场景 + 本镜动作起点 + 景别 + 构图 + 光线；不把字幕和水印烤进画面。",
+    "motion_prompt_template": "开拍即动作：起点姿态 → 中间动作 → 落点；镜头运动必须与宿主观察一致。"
+  },
+  "prompt_usage_notice": "以下提示词是基于参考视频的逆向拆解草案，仅用于分析原视频的镜头构成。用于自己的作品时，请替换为自有角色、场景和品牌资产，并根据目标工具合理优化；不保证复刻原片。",
+  "negative_prompt_policy": "本 Skill 不生成负面提示词。不同生成模型是否需要负面提示、支持哪些字段以及具体表述差异很大，请由用户实际使用的模型或工作流自行判断和甄别。",
+  "next_options": [
+    {
+      "id": "A",
+      "label": "继续拆下一批 5 个镜头（约镜头 6-10）",
+      "action": "continue",
+      "detail_start": 6,
+      "detail_count": 5
+    },
+    {
+      "id": "B",
+      "label": "指定一个时间段继续拆",
+      "action": "time_range"
+    },
+    {
+      "id": "C",
+      "label": "指定一个镜头范围继续拆",
+      "action": "shot_range"
+    },
+    {
+      "id": "D",
+      "label": "先不继续，只保留全片结构概览",
+      "action": "stop"
+    }
+  ],
+  "handoff": {
+    "draft_status": "first_pass_reverse_engineering",
+    "purpose": "供用户自己的 AI 工作流、新对话/其他模型或传统剪辑继续深化。",
+    "analysis_anchors": {
+      "first_transition": {
+        "time_sec": 5,
+        "type": "hard_cut",
+        "label": "硬切",
+        "confidence": 0.9,
+        "evidence": "measured_visual_transition"
+      },
+      "first_camera_movement": {
+        "shot_id": 2,
+        "time_sec": 6.25,
+        "type": "apparent_zoom_in",
+        "label": "画面前景扩张，疑似推近（不能区分变焦与物理推进）",
+        "confidence": 0.72
+      },
+      "minimal_first_unit": {
+        "start_sec": 0.0,
+        "end_sec": 5,
+        "label": "先看开场到首个转场的最小分析单元"
+      }
+    },
+    "open_questions": [],
+    "review_required_shots": [
+      {
+        "shot_id": 3,
+        "warnings": [
+          {
+            "code": "camera_source_conflict",
+            "message": "宿主运镜判断与画面运动测量不一致；请复核后再使用运镜描述。"
+          }
+        ]
+      }
+    ],
+    "downstream_options": [
+      {
+        "id": "own_workflow",
+        "label": "接自己的 AI 工作流",
+        "use": "使用逐镜画面提示词、视频提示词、首尾帧、运镜和转场；先处理标记为需复核的镜头。"
+      },
+      {
+        "id": "llm_continuation",
+        "label": "交给新对话或其他模型继续",
+        "use": "同时提供 professional_handoff.md、professional_analysis.json 和对应参考帧/视频。"
+      },
+      {
+        "id": "traditional_editor",
+        "label": "交给传统剪辑",
+        "use": "使用时间线、切点、时长、景别、素材需求和参考片。"
+      }
+    ]
+  },
+  "evidence": {
+    "general_scan": "quick_scan.json",
+    "context": "host-provided",
+    "mechanics": "measured",
+    "timecode_frames": "provided",
+    "timecode_frame_count": 3,
+    "evidence_contact_sheet": "evidence_contact_sheet.jpg",
+    "evidence_manifest": "E:\\gpt---视觉分析\\skills\\professional-video-analysis\\examples\\evidence_manifest.example.json",
+    "observed_fields": [
+      "camera_motion",
+      "transitions"
+    ]
+  },
+  "limitations": [
+    "This is a structural and production-planning analysis, not an authoritative creative critique.",
+    "Camera and transition measurements are visual estimates with confidence; they are not physical rig metadata.",
+    "Semantic observations, OCR, and identity consistency must come from the host or another validated analyzer.",
+    "A plan does not guarantee asset consistency, humor, net sense, or audience response."
+  ],
+  "next_action": "本批有镜头需要先复核切分和运镜冲突，再决定是否继续。"
+}

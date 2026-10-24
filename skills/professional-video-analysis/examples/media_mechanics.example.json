@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "watermark": {"author": "我密码呢", "mark": "wmmn"},
+  "source": {"provider": "host_media_handle", "source_hash": "sha256:example", "duration_sec": 60},
+  "method": {
+    "name": "phase_correlation_and_transition_signatures",
+    "sampling_fps": 4,
+    "frame_size_px": 192,
+    "claims": "visual motion and transition signatures, not physical rig metadata"
+  },
+  "shots": [
+    {
+      "id": 1,
+      "start_sec": 0,
+      "end_sec": 5,
+      "camera": {"type": "static", "label": "画面基本固定", "confidence": 0.91, "direction": null, "median_shift_px": 0.12, "scale_ratio": 1.0, "first_motion_sec": null, "evidence": "measured_visual_motion"},
+      "transition_in": {"time_sec": 0, "type": "opening", "label": "开场（无前序转场）", "confidence": 1.0, "evidence": "structural"}
+    },
+    {
+      "id": 2,
+      "start_sec": 5,
+      "end_sec": 10,
+      "camera": {"type": "apparent_zoom_in", "label": "画面前景扩张，疑似推近（不能区分变焦与物理推进）", "confidence": 0.72, "direction": null, "median_shift_px": 0.4, "scale_ratio": 0.972, "first_motion_sec": 6.25, "evidence": "measured_visual_motion"},
+      "transition_in": {"time_sec": 5, "type": "hard_cut", "label": "硬切", "confidence": 0.9, "evidence": "measured_visual_transition"}
+    },
+    {
+      "id": 3,
+      "start_sec": 10,
+      "end_sec": 15,
+      "camera": {"type": "horizontal", "label": "画面整体向左平移（疑似横摇或横移）", "confidence": 0.68, "direction": "left", "median_shift_px": 2.1, "scale_ratio": 1.0, "first_motion_sec": 10.5, "evidence": "measured_visual_motion"},
+      "transition_in": {"time_sec": 10, "type": "hard_cut", "label": "硬切", "confidence": 0.88, "evidence": "measured_visual_transition"}
+    },
+    {
+      "id": 4,
+      "start_sec": 15,
+      "end_sec": 20,
+      "camera": {"type": "static", "label": "画面基本固定", "confidence": 0.93, "direction": null, "median_shift_px": 0.1, "scale_ratio": 1.0, "first_motion_sec": null, "evidence": "measured_visual_motion"},
+      "transition_in": {"time_sec": 15, "type": "hard_cut", "label": "硬切", "confidence": 0.91, "evidence": "measured_visual_transition"}
+    },
+    {
+      "id": 5,
+      "start_sec": 20,
+      "end_sec": 25,
+      "camera": {"type": "static", "label": "画面基本固定", "confidence": 0.92, "direction": null, "median_shift_px": 0.08, "scale_ratio": 1.0, "first_motion_sec": null, "evidence": "measured_visual_motion"},
+      "transition_in": {"time_sec": 20, "type": "flash", "label": "闪白/闪光转场", "confidence": 0.78, "evidence": "measured_visual_transition"}
+    }
+  ],
+  "first_transition": {"time_sec": 5, "type": "hard_cut", "label": "硬切", "confidence": 0.9, "evidence": "measured_visual_transition"},
+  "first_camera_movement": {"shot_id": 2, "time_sec": 6.25, "type": "apparent_zoom_in", "label": "画面前景扩张，疑似推近（不能区分变焦与物理推进）", "confidence": 0.72},
+  "limitations": [
+    "二维画面不能可靠区分物理推轨、变焦、升降与主体运动。",
+    "溶片、划像和复杂合成转场只能给候选类型与置信度。",
+    "低纹理、强运动模糊和强主体运动会降低运镜判断置信度。"
+  ]
+}

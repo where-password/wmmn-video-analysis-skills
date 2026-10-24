@@ -1,0 +1,55 @@
+name: Bug or accuracy report
+description: Report a reproducible failure or incorrect classification
+title: "[Bug] "
+labels: ["bug", "community-report"]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include passwords, tokens, cookies, private URLs, or unauthorized media."
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Skill
+      options:
+        - general-video-analysis
+        - professional-video-analysis
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Skill version
+      placeholder: "0.4.0"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Host environment
+      description: Agent host, OS, Python, ffmpeg availability.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: redacted_log
+    attributes:
+      label: Redacted log
+      description: Remove local paths, URLs, cookies, tokens, and personal data.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I removed credentials, private URLs, local paths, and unauthorized media.
+          required: true

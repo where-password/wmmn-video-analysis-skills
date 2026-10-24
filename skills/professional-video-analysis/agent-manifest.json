@@ -1,0 +1,80 @@
+{
+  "name": "professional-video-analysis",
+  "version": "0.4.0",
+  "role": "Professional reverse-engineering draft, media mechanics measurement, and downstream handoff layer",
+  "requires": [
+    "general-video-analysis"
+  ],
+  "entrypoint": {
+    "command": "python",
+    "args": [
+      "scripts/build_analysis.py"
+    ]
+  },
+  "required": [
+    "scan_json",
+    "out"
+  ],
+  "optional": [
+    "context_json",
+    "mechanics_json",
+    "evidence_json",
+    "media_manifest"
+  ],
+  "profiles": [
+    "comic_drama",
+    "teaching"
+  ],
+  "outputs": [
+    "professional_report.md",
+    "professional_handoff.md",
+    "professional_analysis.json",
+    "evidence_manifest.json",
+    "evidence_contact_sheet.jpg"
+  ],
+  "boundaries": [
+    "no media acquisition",
+    "no browser or cookie access",
+    "no OCR/VLM",
+    "no invented camera movement or semantic facts",
+    "no generic film criticism"
+  ],
+  "watermark": {
+    "author": "我密码呢",
+    "mark": "wmmn"
+  },
+  "batch_policy": {
+    "default_detail_shots": 5,
+    "remaining_overview": true,
+    "continuation_options": [
+      "next_batch",
+      "time_range",
+      "shot_range",
+      "stop"
+    ]
+  },
+  "capabilities": [
+    "shot-specific prompts",
+    "camera-motion signatures with confidence",
+    "transition signatures with confidence",
+    "first-transition and first-movement anchors",
+    "portable handoff brief",
+    "per-shot feasibility and segmentation-conflict warnings",
+    "no negative-prompt generation",
+    "context schema validation",
+    "time-coded start/middle/end evidence frames",
+    "human-labeled benchmark harness"
+  ],
+  "tools": {
+    "media_mechanics": "scripts/media_mechanics.py",
+    "evidence_frames": "scripts/evidence_frames.py",
+    "benchmark": "scripts/evaluate_benchmark.py"
+  },
+  "schemas": {
+    "context": "schemas/context.schema.json",
+    "professional_analysis": "schemas/professional_analysis.schema.json",
+    "media_mechanics": "schemas/media_mechanics.schema.json",
+    "evidence_manifest": "schemas/evidence_manifest.schema.json",
+    "benchmark_cases": "schemas/benchmark_cases.schema.json"
+  }
+}

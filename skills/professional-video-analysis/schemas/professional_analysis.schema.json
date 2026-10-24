@@ -1,0 +1,694 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/professional_analysis.schema.json",
+  "title": "Professional Video Analysis",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/completed"
+    },
+    {
+      "$ref": "#/$defs/blocked"
+    }
+  ],
+  "$defs": {
+    "blocked": {
+      "type": "object",
+      "required": [
+        "status",
+        "reason",
+        "detail"
+      ],
+      "properties": {
+        "status": {
+          "const": "blocked"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "watermark": {
+      "type": "object",
+      "required": [
+        "author",
+        "mark"
+      ],
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "mark": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batch": {
+      "type": "object",
+      "required": [
+        "batch_index",
+        "batch_start",
+        "batch_end",
+        "batch_shot_count",
+        "total_shots_detected",
+        "previous_shots_est",
+        "remaining_shots_est",
+        "semantic_ready_shots",
+        "semantic_coverage",
+        "detail_mode",
+        "covered_start_sec",
+        "covered_end_sec",
+        "estimated",
+        "review_required_count",
+        "awaiting_observation_count"
+      ],
+      "properties": {
+        "batch_index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "batch_start": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "batch_end": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "batch_shot_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_shots_detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "previous_shots_est": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remaining_shots_est": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic_ready_shots": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "detail_mode": {
+          "enum": [
+            "semantic",
+            "structure_only"
+          ]
+        },
+        "covered_start_sec": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "covered_end_sec": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "estimated": {
+          "type": "boolean"
+        },
+        "review_required_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "awaiting_observation_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "shot": {
+      "type": "object",
+      "required": [
+        "id",
+        "start_sec",
+        "end_sec",
+        "duration_sec",
+        "scene",
+        "characters",
+        "action",
+        "shot_size",
+        "camera",
+        "transition",
+        "first_frame",
+        "last_frame",
+        "image_prompt",
+        "tool_prompt",
+        "motion_prompt",
+        "prompt_source",
+        "observed_fields",
+        "missing_fields",
+        "status",
+        "camera_source",
+        "transition_source",
+        "camera_confidence",
+        "transition_confidence",
+        "feasibility"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "start_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "duration_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "scene": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "characters": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shot_size": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "camera": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transition": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "first_frame": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "last_frame": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image_prompt": {
+          "type": "string"
+        },
+        "tool_prompt": {
+          "type": "string"
+        },
+        "motion_prompt": {
+          "type": "string"
+        },
+        "prompt_source": {
+          "enum": [
+            "host",
+            "assembled_from_observations",
+            "unavailable"
+          ]
+        },
+        "observed_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "enum": [
+            "observed",
+            "partially_observed",
+            "unverified"
+          ]
+        },
+        "camera_source": {
+          "enum": [
+            "host_observation",
+            "visual_measurement",
+            "structural",
+            "unavailable"
+          ]
+        },
+        "transition_source": {
+          "enum": [
+            "host_observation",
+            "visual_measurement",
+            "structural",
+            "unavailable"
+          ]
+        },
+        "camera_confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "transition_confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "feasibility": {
+          "type": "object",
+          "required": [
+            "status",
+            "prompt_status",
+            "warnings"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "draft_ready",
+                "review_required"
+              ]
+            },
+            "prompt_status": {
+              "enum": [
+                "draft_ready",
+                "needs_resplit",
+                "needs_observation"
+              ]
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "segment": {
+      "type": "object",
+      "required": [
+        "shot_range",
+        "shot_count",
+        "start_sec",
+        "end_sec",
+        "estimated_duration_sec",
+        "median_shot_sec",
+        "rhythm_hint",
+        "status"
+      ],
+      "properties": {
+        "shot_range": {
+          "type": "string"
+        },
+        "shot_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "start_sec": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "end_sec": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "estimated_duration_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "median_shot_sec": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "rhythm_hint": {
+          "type": "string"
+        },
+        "status": {
+          "const": "estimated_structure"
+        }
+      },
+      "additionalProperties": true
+    },
+    "option": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "action"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "detail_start": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "detail_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "completed": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "status",
+        "watermark",
+        "domain",
+        "source",
+        "batch",
+        "verdict",
+        "shot_plan",
+        "remaining_segments",
+        "production_plan",
+        "prompt_pack",
+        "prompt_usage_notice",
+        "next_options",
+        "evidence",
+        "limitations",
+        "next_action",
+        "draft",
+        "analysis_anchors",
+        "handoff",
+        "negative_prompt_policy"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "status": {
+          "const": "completed"
+        },
+        "watermark": {
+          "$ref": "#/$defs/watermark"
+        },
+        "domain": {
+          "enum": [
+            "comic_drama",
+            "teaching",
+            "other",
+            "unknown"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "batch": {
+          "$ref": "#/$defs/batch"
+        },
+        "verdict": {
+          "type": "object",
+          "required": [
+            "status",
+            "headline",
+            "scope",
+            "can_reuse",
+            "cannot_guarantee"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "structurally_feasible",
+                "partially_feasible",
+                "insufficient_evidence"
+              ]
+            },
+            "headline": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "can_reuse": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cannot_guarantee": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "shot_plan": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shot"
+          }
+        },
+        "remaining_segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/segment"
+          }
+        },
+        "production_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "step",
+              "action",
+              "owner"
+            ],
+            "properties": {
+              "step": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "prompt_pack": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "prompt_usage_notice": {
+          "type": "string"
+        },
+        "next_options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_action": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "object",
+          "required": [
+            "stage",
+            "label",
+            "handoff_ready",
+            "note",
+            "handoff_ready_reason"
+          ],
+          "properties": {
+            "stage": {
+              "const": "first_pass"
+            },
+            "label": {
+              "type": "string"
+            },
+            "handoff_ready": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            },
+            "handoff_ready_reason": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "analysis_anchors": {
+          "type": "object",
+          "required": [
+            "first_transition",
+            "first_camera_movement",
+            "minimal_first_unit"
+          ],
+          "properties": {
+            "first_transition": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            },
+            "first_camera_movement": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            },
+            "minimal_first_unit": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "handoff": {
+          "type": "object",
+          "required": [
+            "draft_status",
+            "purpose",
+            "analysis_anchors",
+            "open_questions",
+            "downstream_options",
+            "review_required_shots"
+          ],
+          "properties": {
+            "draft_status": {
+              "type": "string"
+            },
+            "purpose": {
+              "type": "string"
+            },
+            "analysis_anchors": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "open_questions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "downstream_options": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "review_required_shots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "negative_prompt_policy": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "general-video-analysis",
+  "version": "0.1.1",
+  "role": "Fast video structure scan and applicability router",
+  "entrypoint": {
+    "command": "python",
+    "args": [
+      "scripts/scan.py"
+    ]
+  },
+  "required": [
+    "out"
+  ],
+  "outputs": [
+    "quick_scan.md",
+    "quick_scan.json",
+    "quick_contact_sheet.jpg"
+  ],
+  "statuses": [
+    "not_applicable_for_professional_analysis",
+    "general_only",
+    "professional_candidate",
+    "long_video_candidate",
+    "blocked"
+  ],
+  "recommends": [
+    "professional-video-analysis",
+    "long-video-index"
+  ],
+  "boundaries": [
+    "no professional critique",
+    "no generic film review",
+    "no long-form corpus",
+    "no browser automation",
+    "no cookie-profile fallback"
+  ],
+  "host_adapter_contract": "ACQUISITION_CONTRACT.md",
+  "url_flow": "URL -> host viewer/media adapter -> readable media_path -> scan.py",
+  "inputs": [
+    "source_or_media_manifest",
+    "out"
+  ],
+  "optional": [
+    "window",
+    "media_manifest"
+  ],
+  "media_contract": "schemas/media_handle.schema.json",
+  "input_any_of": [
+    "source",
+    "media_manifest"
+  ],
+  "user_facing_contract": "Show quick_scan.md in chat and embed quick_contact_sheet.jpg; do not only list files.",
+  "watermark": {
+    "author": "我密码呢",
+    "mark": "wmmn"
+  }
+}

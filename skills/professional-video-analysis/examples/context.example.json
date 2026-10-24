@@ -1,0 +1,118 @@
+{
+  "domain": "comic_drama",
+  "goal": "拆解并规划复刻一条约 60 秒漫剧，首批先拆开头约 25 秒",
+  "target_duration_sec": 30,
+  "aspect_ratio": "16:9",
+  "available_assets": [
+    "角色身份锚点",
+    "场景参考",
+    "道具参考"
+  ],
+  "available_tools": [
+    "图像生成",
+    "图生视频",
+    "本地剪辑"
+  ],
+  "workflow_constraints": [
+    "角色跨镜一致性优先",
+    "每个镜头必须有真实运动"
+  ],
+  "shots": [
+    {
+      "id": 1,
+      "scene": "昏暗房间，桌面上有一台亮着的显示器",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "从屏幕后探出头",
+      "shot_size": "中景",
+      "camera": "固定",
+      "transition": "开场",
+      "first_frame": "角色完全躲在屏幕后",
+      "last_frame": "角色露出半张脸",
+      "image_prompt": "昏暗房间，蓝发角色从显示器后探出半张脸，中景，屏幕冷光，人物为视觉中心。",
+      "tool_prompt": "昏暗房间，蓝发角色从屏幕后探头，中景，冷色屏幕光，真实角色运动。",
+      "motion_prompt": "开拍即探头，从屏幕后缓慢露出半张脸，最后停住，镜头固定。"
+    },
+    {
+      "id": 2,
+      "scene": "同一房间，桌面出现一块饼干",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "双手捧起饼干",
+      "shot_size": "中近景",
+      "camera": "缓推",
+      "transition": "硬切",
+      "first_frame": "角色盯着饼干",
+      "last_frame": "角色把饼干捧到胸前",
+      "image_prompt": "蓝发角色双手捧起桌上的饼干，中近景，缓推构图，屏幕光照亮侧脸。",
+      "tool_prompt": "蓝发角色捧起饼干，中近景，镜头缓慢推进，真实手部动作。",
+      "motion_prompt": "镜头缓慢向前，角色双手从桌面抬起并捧住饼干。"
+    },
+    {
+      "id": 3,
+      "scene": "同一房间，饼干靠近嘴边",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "咬住饼干",
+      "shot_size": "近景",
+      "camera": "固定",
+      "transition": "硬切",
+      "first_frame": "饼干靠近嘴边",
+      "last_frame": "角色咬住饼干",
+      "image_prompt": "蓝发角色咬住饼干，近景，屏幕冷光，表情专注。",
+      "tool_prompt": "蓝发角色咬住饼干，近景，固定机位，真实嘴部动作。",
+      "motion_prompt": "角色把饼干送到嘴边并咬下，头部轻微前倾。"
+    },
+    {
+      "id": 4,
+      "scene": "同一房间，角色表情变化",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "咬出缺口后得意",
+      "shot_size": "特写",
+      "camera": "固定",
+      "transition": "硬切",
+      "first_frame": "饼干完整",
+      "last_frame": "饼干出现缺口，角色得意",
+      "image_prompt": "蓝发角色咬出缺口后得意，特写，屏幕冷光，表情清晰。",
+      "tool_prompt": "蓝发角色咬出饼干缺口后露出得意表情，特写，固定机位。",
+      "motion_prompt": "角色咬下后嘴角上扬，眼睛看向镜头，动作停住。"
+    },
+    {
+      "id": 5,
+      "scene": "同一房间，角色突然紧张",
+      "characters": [
+        "蓝发角色"
+      ],
+      "action": "被抓包后瞪眼脸红",
+      "shot_size": "近景",
+      "camera": "固定",
+      "transition": "闪白后硬切",
+      "first_frame": "角色停顿",
+      "last_frame": "角色瞪眼脸红",
+      "image_prompt": "蓝发角色被抓包后瞪眼脸红，近景，屏幕冷光，情绪转折。",
+      "tool_prompt": "蓝发角色突然瞪眼脸红，近景，固定机位，情绪从停顿转为紧张。",
+      "motion_prompt": "角色先停住，随后眼睛睁大、脸颊泛红，尾巴竖起。"
+    }
+  ],
+  "observations": {
+    "camera_motion": [
+      "固定",
+      "缓推",
+      "固定",
+      "固定",
+      "固定"
+    ],
+    "transitions": [
+      "开场",
+      "硬切",
+      "硬切",
+      "硬切",
+      "闪白后硬切"
+    ]
+  }
+}
