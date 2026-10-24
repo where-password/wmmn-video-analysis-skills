@@ -136,7 +136,9 @@ Open-source code can always be forked or modified. The goal is not impossible DR
 
 ## License
 
-尚未选择许可证。上传 GitHub 前请明确选择 MIT、Apache-2.0 或其他许可证。
+MIT License. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 wmmn (where-password).
 
 ## Author
 

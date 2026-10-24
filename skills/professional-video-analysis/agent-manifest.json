@@ -1,6 +1,6 @@
 {
   "name": "professional-video-analysis",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "role": "Professional reverse-engineering draft, media mechanics measurement, and downstream handoff layer",
   "requires": [
     "general-video-analysis"
@@ -76,5 +76,6 @@
     "media_mechanics": "schemas/media_mechanics.schema.json",
     "evidence_manifest": "schemas/evidence_manifest.schema.json",
     "benchmark_cases": "schemas/benchmark_cases.schema.json"
-  }
+  },
+  "license": "MIT"
 }

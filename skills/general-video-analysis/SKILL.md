@@ -4,6 +4,7 @@ description: Quickly scan any video into a short structural card. Use when a use
 metadata:
   author: "我密码呢 (wmmn)"
   watermark: "wmmn / 我密码呢"
+  license: "MIT"
   short-description: "Fast video structure scan and applicability router"
 ---
 

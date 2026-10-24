@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-10-24
+
+- Add the MIT License to the standalone skill package.
+- Declare the license in the skill metadata and package manifest.
+
 ## 0.1.1 - 2026-10-24
 
 - Export per-shot `shot_rows` with absolute start, end, and duration values.

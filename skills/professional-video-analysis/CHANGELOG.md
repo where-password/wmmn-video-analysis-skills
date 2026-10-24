@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 - 2026-10-24
+
+- Add the MIT License to the standalone skill package.
+- Declare the license in the skill metadata and package manifest.
+- Update the README license statement for MIT distribution.
+
 ## 0.4.0 - 2026-10-24
 
 - Add formal `context.json` Schema validation and duplicate shot-id checks.

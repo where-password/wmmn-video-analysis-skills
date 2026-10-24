@@ -10,8 +10,8 @@ This repository is a public beta. The engineering pipeline is testable, but real
 
 | Skill | Purpose | Version |
 | --- | --- | --- |
-| [`general-video-analysis`](skills/general-video-analysis) | Fast, low-cost structural scan and routing card | 0.1.1 |
-| [`professional-video-analysis`](skills/professional-video-analysis) | Professional reverse-engineering draft, camera/transition measurements, time-coded evidence frames, and downstream handoff | 0.4.0 |
+| [`general-video-analysis`](skills/general-video-analysis) | Fast, low-cost structural scan and routing card | 0.1.2 |
+| [`professional-video-analysis`](skills/professional-video-analysis) | Professional reverse-engineering draft, camera/transition measurements, time-coded evidence frames, and downstream handoff | 0.4.1 |
 
 ## Boundaries
 
@@ -70,4 +70,6 @@ The visible `wmmn · 我密码呢` watermark is intentional and appears in repor
 
 ## License
 
-No license file has been selected yet. Public visibility does not by itself grant reuse rights. The maintainer must select a license before this repository can be described as OSI-approved open source.
+MIT License. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 wmmn (where-password).

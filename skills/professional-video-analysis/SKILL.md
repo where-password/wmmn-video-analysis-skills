@@ -4,6 +4,7 @@ description: Turn a general video scan plus host-provided domain context into a 
 metadata:
   author: "我密码呢 (wmmn)"
   watermark: "wmmn / 我密码呢"
+  license: "MIT"
   short-description: "Professional video decomposition and reproduction planning"
 ---
 

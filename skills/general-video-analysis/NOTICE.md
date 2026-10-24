@@ -9,3 +9,5 @@ This attribution notice is part of the distributed skill package and should be r
 The visible watermark is intentionally redundant. Any fork or modified distribution that removes the project attribution should be treated as an unofficial derivative, not as this project or an authorized release.
 
 No open-source license has been selected yet. Add a LICENSE file before public distribution.
+
+License: MIT

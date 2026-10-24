@@ -101,3 +101,9 @@ The report flags segmentation contradictions such as a fixed-camera shot whose s
 `context.json` and the evidence manifest are validated against JSON Schemas. Time-coded evidence frames make analyzed shots traceable without requiring production assets. Formal accuracy claims require a human-labeled benchmark; see `benchmarks/README.md`.
 
 This skill does not generate negative prompts. The report ends with one notice that users should judge and adapt negative prompts in their actual model or workflow. `professional_handoff.md` packages the draft for a new chat, another model, an AI workflow, or traditional editing.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 wmmn (where-password).
