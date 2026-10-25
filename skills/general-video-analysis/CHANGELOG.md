@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.10 - 2026-10-25
+
+- Add a three-point usage and copyright statement to the repository homepage and Skill README.
+- Add the full usage/copyright disclaimer and link it from the homepage.
+- Keep the first-run notice to three concise lines: authorized video source, short disclaimer, and Douyin feedback.
+
 ## 0.2.9 - 2026-10-25
 
 - Make the first-run notice deterministic: append it to the end of the first overview and mark it as shown.

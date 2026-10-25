@@ -80,7 +80,7 @@ class ScanUnitTests(unittest.TestCase):
         self.assertIn("多镜头", result["headline"])
 
     def test_source_and_notice_keep_watermark(self):
-        for rel in ["SKILL.md", "README.md", "NOTICE.md", "agent-manifest.json", "scripts/scan.py", "scripts/build_overview.py", "references/first-run-notice.md"]:
+        for rel in ["SKILL.md", "README.md", "NOTICE.md", "agent-manifest.json", "scripts/scan.py", "scripts/build_overview.py", "DISCLAIMER.md"]:
             self.assertIn("wmmn", (ROOT / rel).read_text(encoding="utf-8"))
 
     def test_first_run_notice_has_source_and_copyright_guidance(self):
@@ -88,7 +88,7 @@ class ScanUnitTests(unittest.TestCase):
         self.assertIn("历史记录、点赞或收藏", notice)
         self.assertIn("B站", notice)
         self.assertIn("版权", notice)
-        self.assertIn("公司、商业", notice)
+        self.assertIn("公司或商业", notice)
         self.assertIn("抖音私信", notice)
         self.assertIn("我密码呢", notice)
 
@@ -101,7 +101,7 @@ class ScanUnitTests(unittest.TestCase):
             self.assertTrue(persisted_first)
             self.assertTrue(state.is_file())
             self.assertTrue(first.startswith("BASE"))
-            self.assertIn("视频来源与使用边界", first)
+            self.assertIn("使用提醒", first)
             self.assertFalse(shown_second)
             self.assertTrue(persisted_second)
             self.assertEqual(second, "BASE")

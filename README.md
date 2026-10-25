@@ -22,11 +22,19 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 - 有问题或建议，欢迎在评论区或 GitHub Issues 反馈。
 - WorkBuddy、豆包工作版等 Agent 尚未测试；可以先尝试，成功或失败都欢迎反馈到 GitHub。
 
+## Usage and Copyright / 使用与版权声明
+
+1. 分析结果仅供个人学习、研究和交流参考。
+2. 公司、商业或其他组织使用前，用户需自行确认版权、授权和合规责任。
+3. 作者仅提供视频分析工具，不提供视频内容授权；不承担因视频或分析结果使用产生的责任，本提示不构成法律意见。
+
+See [DISCLAIMER.md](DISCLAIMER.md) for the full disclaimer. This is not legal advice.
+
 ## Skills
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.9 working version |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.10 working version |
 | [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.1 |
 | Long Video Index | Transcript-backed long-video index, timestamp lookup, and evidence trail | In development; not included in the current public release |
 
