@@ -77,7 +77,7 @@ def resolve_source(source: str, out: Path) -> tuple[Path, str]:
 
 
 def make_contact_sheet(ffmpeg: str, media: Path, out: Path, start: float, duration: float, count: int = 8) -> str | None:
-    from PIL import Image, ImageDraw, ImageFont
+    from PIL import Image, ImageDraw
 
     frame_dir = out / "frames"
     frame_dir.mkdir(parents=True, exist_ok=True)
@@ -93,22 +93,8 @@ def make_contact_sheet(ffmpeg: str, media: Path, out: Path, start: float, durati
     label_h = 26
     columns = 4
     sheet_rows = (len(rows) + columns - 1) // columns
-    footer_h = 28
-    sheet = Image.new("RGB", (columns * thumb_w, sheet_rows * (thumb_h + label_h) + footer_h), (24, 24, 24))
+    sheet = Image.new("RGB", (columns * thumb_w, sheet_rows * (thumb_h + label_h)), (24, 24, 24))
     draw = ImageDraw.Draw(sheet)
-    watermark_font = None
-    font_candidates = [
-        Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts/msyh.ttc",
-        Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts/simhei.ttf",
-        Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
-    ]
-    for font_path in font_candidates:
-        if font_path.exists():
-            try:
-                watermark_font = ImageFont.truetype(str(font_path), 14)
-                break
-            except Exception:
-                pass
     for index, (time_sec, path) in enumerate(rows):
         with Image.open(path) as image:
             image = image.convert("RGB")
@@ -117,8 +103,6 @@ def make_contact_sheet(ffmpeg: str, media: Path, out: Path, start: float, durati
             y = (index // columns) * (thumb_h + label_h)
             sheet.paste(image, (x, y))
             draw.text((x + 8, y + thumb_h + 5), f"{int(time_sec // 60):02d}:{time_sec % 60:05.2f}", fill=(255, 255, 255))
-    watermark_text = "wmmn · 我密码呢" if watermark_font else "wmmn"
-    draw.text((10, sheet.height - footer_h + 6), watermark_text, fill=(220, 220, 220), font=watermark_font)
     result = out / "quick_contact_sheet.jpg"
     sheet.save(result, quality=88)
     return relative_posix(result, out)
@@ -196,9 +180,6 @@ def render_markdown(payload: dict[str, Any]) -> str:
         "## 路由规则",
         "",
         "内容类型和最终专业方向建议必须由模型查看画面、字幕或逐字稿后写入 content_analysis.json；不得仅凭时长、镜头数或切点密度向用户推荐专业 Skill。",
-        "",
-        "---",
-        "> wmmn · 我密码呢",
     ])
     return "\n".join(lines) + "\n"
 
@@ -207,8 +188,7 @@ def render_blocked_markdown(payload: dict[str, Any]) -> str:
     return (
         "# 视频分析暂时无法继续\n\n"
         "这次暂时没有取得可读取的视频媒体，因此无法完成内容概览。\n\n"
-        "可以改为提供可读取的视频文件或可公开访问的链接后重试。\n\n"
-        "---\n> wmmn · 我密码呢\n"
+        "可以改为提供可读取的视频文件或可公开访问的链接后重试。\n"
     )
 
 

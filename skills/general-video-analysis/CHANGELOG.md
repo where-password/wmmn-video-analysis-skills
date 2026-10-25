@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.12 - 2026-10-26
+
+- Show the visible `wmmn · 我密码呢` watermark only in the first successful user-facing overview.
+- Remove repeated watermark footers from subsequent overviews, internal structure Markdown, and blocked Markdown.
+- Keep machine-readable attribution and image evidence marking unchanged.
+
 ## 0.2.11 - 2026-10-25
 
 - Keep the first-run notice to three short lines: source/usage responsibility, brief disclaimer, and accuracy feedback.

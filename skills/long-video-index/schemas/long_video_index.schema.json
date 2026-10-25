@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/long_video_index.schema.json",
+  "title": "Long Video Index Summary",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "watermark",
+    "index_id",
+    "source",
+    "duration_sec",
+    "counts",
+    "coverage",
+    "parameters",
+    "sections",
+    "files",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "status": {
+      "const": "completed"
+    },
+    "watermark": {
+      "type": "object",
+      "required": [
+        "author",
+        "mark"
+      ],
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "mark": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "index_id": {
+      "type": "string",
+      "pattern": "^lv-[0-9a-f]{20}$"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "title",
+        "transcript_file",
+        "transcript_sha256",
+        "rights"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transcript_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transcript_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "media_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rights": {
+          "enum": [
+            "public",
+            "owned",
+            "authorized",
+            "internal",
+            "unknown"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "duration_sec": {
+      "type": "number",
+      "minimum": 0
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "segments",
+        "chunks",
+        "sections",
+        "chapters",
+        "characters"
+      ],
+      "properties": {
+        "segments": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sections": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chapters": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "characters": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "first_segment_start_sec",
+        "last_segment_end_sec",
+        "speech_sec",
+        "coverage_ratio",
+        "largest_gap_sec",
+        "gaps_over_10s"
+      ],
+      "additionalProperties": true
+    },
+    "parameters": {
+      "type": "object",
+      "required": [
+        "target_chunk_sec",
+        "max_chunk_sec",
+        "section_sec"
+      ],
+      "additionalProperties": true
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "start_sec",
+          "end_sec",
+          "chunk_count"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "chapter",
+              "time_window"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "start_sec": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_sec": {
+            "type": "number",
+            "minimum": 0
+          },
+          "chunk_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "files": {
+      "type": "object",
+      "required": [
+        "database",
+        "evidence",
+        "outline"
+      ],
+      "additionalProperties": true
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

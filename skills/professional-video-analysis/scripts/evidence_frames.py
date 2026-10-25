@@ -103,7 +103,7 @@ def annotate_frame(path: Path, shot_id: int, role: str, seconds: float) -> tuple
     canvas.paste(image, (0, 0))
     draw = ImageDraw.Draw(canvas)
     font = font_for_size(max(13, int(bar_height * 0.38)))
-    text = f"{WATERMARK}  |  shot {shot_id:03d}  |  {role}  |  {timecode(seconds)}"
+    text = f"shot {shot_id:03d}  |  {role}  |  {timecode(seconds)}"
     draw.text((10, height + max(4, (bar_height - 18) // 2)), text, fill=(235, 235, 235), font=font)
     canvas.save(path, quality=92)
     return canvas.size
@@ -123,7 +123,7 @@ def make_contact_sheet(frames: list[dict[str, Any]], out_path: Path) -> tuple[in
         x = (index % columns) * cell_w + (cell_w - image.width) // 2
         y = (index // columns) * cell_h + (cell_h - image.height) // 2
         sheet.paste(image, (x, y))
-    draw.text((10, rows * cell_h + 9), f"{WATERMARK}  |  time-coded evidence sheet", fill=(235, 235, 235), font=font)
+    draw.text((10, rows * cell_h + 9), "time-coded evidence sheet", fill=(235, 235, 235), font=font)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     sheet.save(out_path, quality=92)
     return sheet.size

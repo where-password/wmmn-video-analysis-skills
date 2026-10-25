@@ -1,6 +1,6 @@
 {
   "name": "professional-video-analysis",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "role": "Comic/AIGC-oriented professional reverse-engineering draft with base content-context integration",
   "requires": [
     "general-video-analysis"
@@ -98,5 +98,13 @@
     "harness": "benchmarks/README.md",
     "community_call": "benchmarks/community-call.md",
     "human_labeling": "benchmarks/human-labeling.md"
+  },
+  "visible_watermark_policy": "first_successful_professional_report_only",
+  "first_run_policy": {
+    "mode": "auto",
+    "placement": "end_of_first_professional_report",
+    "state_file": ".state/first-run-v1.json",
+    "once_per_installation": true,
+    "contains_visible_watermark": true
   }
 }

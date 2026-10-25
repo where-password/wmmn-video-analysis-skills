@@ -1,4 +1,6 @@
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -93,6 +95,7 @@ class ScanUnitTests(unittest.TestCase):
         self.assertIn("论坛", notice)
         self.assertIn("不保证完全准确", notice)
         self.assertIn("我密码呢", notice)
+        self.assertIn("wmmn · 我密码呢", notice)
 
     def test_first_run_notice_is_appended_once_per_installation(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -108,7 +111,7 @@ class ScanUnitTests(unittest.TestCase):
             self.assertTrue(persisted_second)
             self.assertEqual(second, "BASE")
 
-    def test_internal_structure_markdown_keeps_watermark(self):
+    def test_internal_structure_markdown_has_no_user_watermark(self):
         payload = {
             "media": {"duration_sec": 60, "width": 1920, "height": 1080, "fps": 30},
             "structure": {"shots": 10, "cuts": 9, "median_shot_sec": 6},
@@ -116,7 +119,7 @@ class ScanUnitTests(unittest.TestCase):
         }
         rendered = render_markdown(payload)
         self.assertIn("不直接展示给用户", rendered)
-        self.assertIn("wmmn · 我密码呢", rendered)
+        self.assertNotIn("wmmn · 我密码呢", rendered)
 
 
 class OverviewTests(unittest.TestCase):
@@ -234,6 +237,32 @@ class OverviewTests(unittest.TestCase):
         self.assertIn("## 调侃对象", rendered)
         self.assertNotIn("professional-video-analysis", rendered)
         self.assertNotIn("long-video-index", rendered)
+
+    def test_first_overview_has_one_time_watermark(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            state = root / "watermark-state.json"
+            analysis = ROOT / "examples" / "content_analysis.example.json"
+            script = ROOT / "scripts" / "build_overview.py"
+            first_out = root / "first"
+            second_out = root / "second"
+            first = subprocess.run(
+                [sys.executable, str(script), "--analysis-json", str(analysis), "--out", str(first_out),
+                 "--first-run-state", str(state)],
+                cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", env=os.environ.copy(),
+            )
+            second = subprocess.run(
+                [sys.executable, str(script), "--analysis-json", str(analysis), "--out", str(second_out),
+                 "--first-run-state", str(state)],
+                cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", env=os.environ.copy(),
+            )
+            self.assertEqual(first.returncode, 0, first.stderr)
+            self.assertEqual(second.returncode, 0, second.stderr)
+            first_text = (first_out / "video_overview.md").read_text(encoding="utf-8")
+            second_text = (second_out / "video_overview.md").read_text(encoding="utf-8")
+            self.assertIn("wmmn · 我密码呢", first_text)
+            self.assertNotIn("wmmn · 我密码呢", second_text)
+            self.assertNotIn("使用提醒", second_text)
 
     def test_example_matches_rendered_contract(self):
         data = json.loads((ROOT / "examples" / "content_analysis.example.json").read_text(encoding="utf-8"))

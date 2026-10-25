@@ -21,6 +21,18 @@ A useful bug report includes:
 - expected result and actual result;
 - proof that the submitted media is authorized, if media is attached.
 
+## Long-video reports
+
+For long-video-index, include:
+
+- transcript format and encoding;
+- whether the transcript came from human subtitles or ASR;
+- a redacted excerpt around the missed timestamp;
+- the original query and expected timestamp;
+- whether locate.py returned no_matches or a wrong quote.
+
+Do not upload a full private transcript unless you have the right to share it. A small synthetic reproduction is preferred.
+
 ## Community benchmark submissions
 
 Community cases are exploratory until reviewed.

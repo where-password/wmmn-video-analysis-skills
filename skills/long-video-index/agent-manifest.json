@@ -1,0 +1,157 @@
+{
+  "name": "long-video-index",
+  "version": "0.3.5",
+  "role": "Multi-episode transcript corpus, evidence retrieval, locator, and optional alias mention index",
+  "entrypoint": {
+    "command": "python",
+    "args": [
+      "scripts/build_index.py"
+    ]
+  },
+  "required": [
+    "transcript",
+    "out"
+  ],
+  "optional": [
+    "aliases",
+    "audit_sample_files",
+    "chapters",
+    "collection_title",
+    "entities",
+    "episode",
+    "evidence_per_hit",
+    "language",
+    "limit",
+    "max_chunk_sec",
+    "media_sha256",
+    "overwrite",
+    "rights",
+    "section_sec",
+    "source_title",
+    "source_url",
+    "target_chunk_sec",
+    "transcripts_directory"
+  ],
+  "inputs": [
+    "json_srt_or_vtt_transcript",
+    "json_srt_or_vtt_transcript_directory",
+    "optional_entity_alias_json"
+  ],
+  "outputs": [
+    "long_video_index.json",
+    "long_video_index.sqlite",
+    "evidence.jsonl",
+    "index_outline.md"
+  ],
+  "tools": {
+    "build_single": "scripts/build_index.py",
+    "locate_single": "scripts/locate.py",
+    "build_collection": "scripts/build_collection.py",
+    "query_collection": "scripts/query_collection.py",
+    "build_mentions": "scripts/build_mentions.py",
+    "query_mentions": "scripts/query_mentions.py",
+    "audit": "scripts/audit_input.py"
+  },
+  "query_contract": "Literal terms only; every term must occur in the same retrieval chunk.",
+  "evidence_fields": [
+    "index_id",
+    "transcript_sha256",
+    "evidence_id",
+    "segment_id",
+    "start_sec",
+    "end_sec",
+    "quote",
+    "quote_sha256"
+  ],
+  "statuses": [
+    "completed",
+    "no_matches",
+    "blocked"
+  ],
+  "boundaries": [
+    "no media acquisition",
+    "no ASR or subtitle generation",
+    "no shot or keyframe analysis",
+    "no professional production breakdown",
+    "no semantic synonym search",
+    "no ungrounded summaries",
+    "no automatic entity discovery in the alias mention index",
+    "no claim that a catalog title is evidence"
+  ],
+  "handoff": {
+    "unit": "episode_id + source-absolute time range + evidence ids",
+    "automatic_cross_skill_call": false
+  },
+  "watermark": {
+    "author": "我密码呢",
+    "mark": "wmmn"
+  },
+  "license": "MIT",
+  "capabilities": [
+    "preflight machine profile, background occupancy, and three deployment-mode cost estimates",
+    "multi-episode timestamped transcript collection with actual chunk content",
+    "AI-readable bounded retrieval with episode, time, context, and evidence",
+    "user-facing cross-episode location results",
+    "optional exact-alias entity mention index without automatic NER",
+    "single-transcript index and evidence lookup",
+    "caller-provided ASR alias expansion for query terms",
+    "180-second segment-window fallback across adjacent chunks"
+  ],
+  "schemas": {
+    "audit": "schemas/audit_report.schema.json",
+    "collection": "schemas/collection.schema.json",
+    "mention_summary": "schemas/mention_summary.schema.json"
+  },
+  "audit_policy": {
+    "no_default_mode": true,
+    "shows_machine_time": true,
+    "shows_human_time": true,
+    "shows_disk_estimate": true,
+    "shows_cpu_share_estimate": true,
+    "shows_machine_profile": true,
+    "background_runtime_note": true,
+    "separates_index_time_from_acquisition_and_asr": true,
+    "states_current_implementation_boundary": true
+  },
+  "audit_outputs": [
+    "audit_report.json",
+    "audit_report.md"
+  ],
+  "integrity_checks": [
+    "full collection JSON equals database collection_json metadata",
+    "retrieval chunk SHA-256",
+    "cited quote SHA-256",
+    "mention summary equals database summary_json metadata"
+  ],
+  "collection_outputs": [
+    "collection.json",
+    "collection.sqlite",
+    "evidence.jsonl",
+    "collection_outline.md"
+  ],
+  "mention_outputs": [
+    "mentions.json",
+    "mentions.sqlite",
+    "mentions.md"
+  ],
+  "first_run_notice": "references/first-run-notice.md",
+  "feedback_channels": [
+    "forum",
+    "douyin_dm",
+    "github_issues"
+  ],
+  "community_guide": "../../COMMUNITY.md",
+  "author_accounts": {
+    "douyin": "我密码呢",
+    "feedback": "forum reply or Douyin DM"
+  },
+  "first_run_policy": {
+    "mode": "auto",
+    "placement": "end_of_first_user_facing_output",
+    "state_file": ".state/first-run-v1.json",
+    "once_per_installation": true,
+    "fallback": "repeat_if_state_cannot_be_persisted",
+    "contains_visible_watermark": true
+  },
+  "visible_watermark_policy": "first_successful_user_facing_output_only"
+}

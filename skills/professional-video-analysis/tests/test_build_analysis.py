@@ -328,6 +328,11 @@ class ProfessionalAnalysisTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "不符合 Schema"):
             validate_context({"domain": "comic_drama", "shots": [{"id": "bad"}]})
 
+    def test_rendered_reports_do_not_duplicate_the_visible_watermark(self):
+        payload = build_payload(self.scan(), {"domain": "comic_drama"})
+        self.assertNotIn("wmmn · 我密码呢", render_markdown(payload))
+        self.assertNotIn("wmmn · 我密码呢", render_handoff(payload))
+
     def test_prompt_notice_is_present(self):
         payload = build_payload(self.scan(), {"domain": "comic_drama"})
         self.assertIn("仅用于分析原视频", payload["prompt_usage_notice"])

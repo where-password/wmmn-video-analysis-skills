@@ -26,6 +26,8 @@ body:
       options:
         - media acquisition
         - general scan
+        - long-video index build
+        - long-video locate
         - mechanics measurement
         - evidence frames
         - professional report

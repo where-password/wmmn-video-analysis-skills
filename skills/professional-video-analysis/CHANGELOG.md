@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.5 - 2026-10-26
+
+- Show the visible `wmmn · 我密码呢` watermark only in the first successful user-facing professional report.
+- Remove repeated watermark footers from later reports, handoff Markdown, benchmark Markdown, and examples.
+- Preserve machine-readable attribution and image evidence-frame marking.
+
 ## 0.4.4 - 2026-10-25
 
 - Add a detailed community human-labeling protocol.

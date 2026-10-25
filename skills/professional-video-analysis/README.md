@@ -84,7 +84,7 @@ Before a detailed batch, the host must inspect the selected shots and populate `
 
 ## Attribution
 
-wmmn · 我密码呢
+The visible `wmmn · 我密码呢` watermark appears only in the first successful user-facing professional report for an installation. The JSON provenance watermark and image evidence-frame marking remain.
 
 ## User-facing output
 

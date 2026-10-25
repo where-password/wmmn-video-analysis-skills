@@ -11,8 +11,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-WATERMARK = "wmmn · 我密码呢"
-
 
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -193,8 +191,6 @@ def render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# 专业视频分析基准报告",
         "",
-        f"> {WATERMARK}",
-        "",
         f"- 状态：**{report['status']}**",
         f"- 用例数量：{agg['case_count']}",
         f"- 切点容差：±{report['tolerance_sec']} 秒",
@@ -233,9 +229,6 @@ def render_markdown(report: dict[str, Any]) -> str:
         "- 指标只反映所提供标注集，不代表所有视频类型的准确率。",
         "- 运镜与转场必须由人工标注真值；不能用同一自动结果自我验证。",
         "- 少于最小用例数时只能标记为 provisional，不能作为正式准确率声明。",
-        "",
-        "---",
-        f"> {WATERMARK}",
     ])
     return "\n".join(lines) + "\n"
 

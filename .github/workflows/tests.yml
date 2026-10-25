@@ -33,3 +33,5 @@ jobs:
         run: python -m unittest discover -s skills/general-video-analysis/tests -v
       - name: Professional video analysis
         run: python -m unittest discover -s skills/professional-video-analysis/tests -v
+      - name: Long video index
+        run: python -m unittest discover -s skills/long-video-index/tests -v

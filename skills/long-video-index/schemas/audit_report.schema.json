@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/audit_report.schema.json",
+  "title": "Long Video Corpus Audit Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "watermark",
+    "scope",
+    "system",
+    "input",
+    "sample",
+    "estimates_sec",
+    "disk_estimate_mb",
+    "modes",
+    "no_default_mode"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.2"
+    },
+    "system": {
+      "type": "object",
+      "required": [
+        "os",
+        "python",
+        "cpu_model",
+        "cpu_count",
+        "ram_total_gb",
+        "disk_free_gb",
+        "background_runtime"
+      ],
+      "properties": {
+        "cpu_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ram_total_gb": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ram_available_gb": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "background_runtime": {
+          "type": "object",
+          "required": [
+            "background_capable",
+            "estimated_index_cpu_cores",
+            "estimated_machine_cpu_share_percent",
+            "gpu_required",
+            "note"
+          ],
+          "properties": {
+            "background_capable": {
+              "type": "boolean"
+            },
+            "estimated_index_cpu_cores": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "estimated_machine_cpu_share_percent": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 100
+            },
+            "gpu_required": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "machine_time",
+          "human_time",
+          "disk",
+          "best_for",
+          "benefit",
+          "limitations",
+          "time_scope",
+          "background_run",
+          "estimated_cpu_cores",
+          "estimated_machine_cpu_share_percent",
+          "gpu_required",
+          "implementation"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ]
+          },
+          "background_run": {
+            "type": "boolean"
+          },
+          "estimated_cpu_cores": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "estimated_machine_cpu_share_percent": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100
+          },
+          "gpu_required": {
+            "type": "boolean"
+          },
+          "implementation": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "no_default_mode": {
+      "const": true
+    }
+  },
+  "additionalProperties": true
+}

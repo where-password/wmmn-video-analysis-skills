@@ -1,0 +1,22 @@
+{
+  "entities": [
+    {
+      "id": "sqlmap",
+      "name": "sqlmap",
+      "type": "tool",
+      "aliases": [
+        "SQLMap",
+        "sqlmap"
+      ]
+    },
+    {
+      "id": "burp-suite",
+      "name": "Burp Suite",
+      "type": "tool",
+      "aliases": [
+        "Burp",
+        "BurpSuite"
+      ]
+    }
+  ]
+}

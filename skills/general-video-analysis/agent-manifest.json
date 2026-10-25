@@ -1,6 +1,6 @@
 {
   "name": "general-video-analysis",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "role": "Broad video content overview with optional soft routing",
   "entrypoint": {
     "command": "python",
@@ -142,7 +142,9 @@
     "placement": "end",
     "state_file": ".state/first-run-v1.json",
     "once_per_installation": true,
-    "fallback": "repeat_if_state_cannot_be_persisted"
+    "fallback": "repeat_if_state_cannot_be_persisted",
+    "contains_visible_watermark": true
   },
-  "disclaimer": "DISCLAIMER.md"
+  "disclaimer": "DISCLAIMER.md",
+  "visible_watermark_policy": "first_successful_user_facing_output_only"
 }

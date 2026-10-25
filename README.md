@@ -12,14 +12,14 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 ## Before you start
 
 - **Video link:** Use the desktop web URL of the exact target video. On Douyin, open the video from History, Likes, or Favorites and copy the in-video share link. On Bilibili, use the specific video page URL. Do not use a homepage, recommendation feed, search result, or screenshot as the source.
-- **Feedback:** Questions and suggestions are welcome in the public comments or GitHub Issues. The project will keep improving from real cases.
+- **Feedback:** Questions and suggestions are welcome in the forum thread, GitHub Issues, or a Douyin DM to **我密码呢**. See [COMMUNITY.md](COMMUNITY.md) for the full feedback and privacy guide.
 - **Compatibility:** WorkBuddy, Doubao Work, and other agent hosts have not yet been tested. You can try them; please report successful or failed runs on GitHub.
 - **Copyright responsibility:** This project provides analysis tooling only and does not grant rights to source videos. Analyze only media you are authorized to access. Results are for personal study, research, and discussion; organizational or commercial use requires the user to verify copyright, licensing, and compliance. The author is not responsible for third-party use of videos or results.
 
 **中文使用提醒：**
 
 - 请提供电脑网页版的目标视频链接。抖音建议从历史记录、点赞或收藏进入目标视频后复制链接；B站请使用具体视频页链接。主页、推荐流、搜索结果和截图不能稳定确定视频。
-- 有问题或建议，欢迎在评论区或 GitHub Issues 反馈。
+- 有问题或建议，欢迎在论坛回帖、GitHub Issues 或抖音私信「我密码呢」反馈；完整说明见 [COMMUNITY.md](COMMUNITY.md)。
 - WorkBuddy、豆包工作版等 Agent 尚未测试；可以先尝试，成功或失败都欢迎反馈到 GitHub。
 
 ## Usage and Copyright / 使用与版权声明
@@ -34,9 +34,9 @@ See [DISCLAIMER.md](DISCLAIMER.md) for the full disclaimer. This is not legal ad
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.11 working version |
-| [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.4 working version |
-| Long Video Index | Transcript-backed long-video index, timestamp lookup, and evidence trail | In development; not included in the current public release |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.12 working version |
+| [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.5 working version |
+| [long-video-index](skills/long-video-index) | Multi-episode transcript corpus, bounded evidence retrieval, timestamp lookup, and optional alias mention index | 0.3.5 working version |
 
 The Skills are designed around separate jobs. The base Skill analyzes content. Professional analysis and long-video indexing are optional directions that users can choose independently.
 
@@ -118,19 +118,20 @@ These fields exist for machine use and routing context. They are not part of the
 
 ## Validation
 
-The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **67 tests**.
+The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **105 tests**.
 
-- General Skill: 25 tests for content-first overview, structured IP/people recognition, stance/tone grounding, narrow routing, examples, and first-run guidance.
-- Professional Skill: schemas, progressive batching, evidence coverage, mechanics, and handoff gates.
-- Long-video index tests remain local while that product is still in development.
+- General Skill: 26 tests for content-first overview, structured IP/people recognition, stance/tone grounding, narrow routing, examples, and first-run watermark guidance.
+- Professional Skill: 46 tests for schemas, progressive batching, evidence coverage, mechanics, first-run watermark behavior, and handoff gates.
+- Long-video index: 33 tests for corpus indexing, evidence retrieval, ASR aliases, first-run watermark behavior, and cost audit.
 
-No accuracy score is claimed yet. Human-labeled validation is community-driven; see the [benchmark protocol](skills/professional-video-analysis/benchmarks/README.md), [human labeling guide](skills/professional-video-analysis/benchmarks/human-labeling.md), and [community call](skills/professional-video-analysis/benchmarks/community-call.md).
+No broad accuracy score is claimed. Retrieval quality should be judged from reproducible cases rather than a generic claim. Further human-labeled validation is community-driven; see the [benchmark protocol](skills/professional-video-analysis/benchmarks/README.md), [human labeling guide](skills/professional-video-analysis/benchmarks/human-labeling.md), and [community call](skills/professional-video-analysis/benchmarks/community-call.md).
 
 ## Repository layout
 
 ~~~text
 skills/
   general-video-analysis/
+  long-video-index/
   professional-video-analysis/
 .github/
   workflows/tests.yml
@@ -148,6 +149,16 @@ The most useful feedback is a concrete video case, not a feature count:
 - a report that overstates its evidence.
 
 Remove cookies, tokens, private URLs, local paths, and unauthorized media before submitting. Read [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Visible watermark policy
+
+Each Skill shows `wmmn · 我密码呢` once in its first successful user-facing output on an installation. Later reports and query results do not repeat it. Machine-readable attribution remains in manifests, JSON, and evidence metadata.
+
+## Feedback forum
+
+The full long-video feedback statement is in [COMMUNITY.md](COMMUNITY.md). The short first-run notice points there so routine analysis output stays compact.
+
+论坛完整反馈说明见 [COMMUNITY.md](COMMUNITY.md)，首次输出只显示简短提醒。
 
 ## 作者其他作品
 

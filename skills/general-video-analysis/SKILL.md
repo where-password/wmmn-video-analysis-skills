@@ -33,7 +33,6 @@ The user should see only:
 - mocking/play targets when applicable;
 - optional, softly worded professional directions;
 - two short limitation notes;
-- the wmmn watermark.
 
 Do not show:
 
@@ -47,7 +46,7 @@ Technical structure is for internal routing and downstream analysis only.
 
 ## First successful use
 
-`build_overview.py` defaults to `--first-run auto`. On the first successful overview for an installation, it appends `references/first-run-notice.md` to the end of `video_overview.md`, writes a small marker at `.state/first-run-v1.json`, and does not repeat the notice afterwards.
+`build_overview.py` defaults to `--first-run auto`. On the first successful overview for an installation, it appends `references/first-run-notice.md` to the end of `video_overview.md`; that notice contains the one-time `wmmn · 我密码呢` watermark. It writes `.state/first-run-v1.json` and does not repeat the watermark or notice afterwards.
 
 If the host cannot persist the marker, the overview still succeeds but reports `first_run_state_persisted: false`; the notice may appear again on the next run. Do not duplicate the notice manually when the generator already appended it.
 

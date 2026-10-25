@@ -197,9 +197,6 @@ def render_overview(content: dict[str, Any]) -> str:
         f"- {basis_sentence(content['basis'])}",
         "- 本分析聚焦视频内容本身，创作意图、风格优劣和传播效果可以结合具体问题再讨论。",
         "",
-        "---",
-        "> wmmn · 我密码呢",
-        "",
     ])
     return "\n".join(lines)
 

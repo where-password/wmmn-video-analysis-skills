@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from first_run_watermark import apply_first_run_watermark
+
 
 NEGATIVE_PROMPT_POLICY = "本 Skill 不生成负面提示词。不同生成模型是否需要负面提示、支持哪些字段以及具体表述差异很大，请由用户实际使用的模型或工作流自行判断和甄别。"
 
@@ -1065,7 +1067,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines.append("- 交付给其他模型时，请连同 `professional_handoff.md`、`professional_analysis.json` 和对应参考帧/视频一起提供。")
     lines.extend(["", "## 提示词使用说明", "", payload["prompt_usage_notice"], "", "## 不能保证", ""])
     lines.extend(f"- {item}" for item in verdict["cannot_guarantee"])
-    lines.extend(["", payload.get("negative_prompt_policy", ""), "", "---", "> wmmn · 我密码呢"])
+    lines.extend(["", payload.get("negative_prompt_policy", "")])
     return "\n".join(lines) + "\n"
 
 def render_handoff(payload: dict[str, Any]) -> str:
@@ -1170,9 +1172,6 @@ def render_handoff(payload: dict[str, Any]) -> str:
         "- 附上对应时间段的参考帧或视频；只有文字时不得补造画面。",
         "- 提示词仅用于逆向分析和改创草案，自用需替换资产并针对目标工具优化。",
         f"- {payload.get('negative_prompt_policy', NEGATIVE_PROMPT_POLICY)}",
-        "",
-        "---",
-        "> wmmn · 我密码呢",
     ])
     return "\n".join(lines) + "\n"
 
@@ -1188,6 +1187,8 @@ def main() -> int:
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--detail-start", type=int, default=1, help="First shot number to detail")
     parser.add_argument("--detail-count", type=int, default=5, help="Number of shots to detail")
+    parser.add_argument("--first-run", choices=["auto", "always", "never"], default="auto", help="Control the one-time visible watermark")
+    parser.add_argument("--first-run-state", type=Path, default=None, help="Override the first-run marker path")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     try:
@@ -1211,17 +1212,26 @@ def main() -> int:
             args.evidence_json,
             content_context,
         )
+        report, watermark_shown, watermark_persisted = apply_first_run_watermark(
+            render_markdown(payload), args.first_run_state, args.first_run
+        )
         (args.out / "professional_analysis.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        (args.out / "professional_report.md").write_text(render_markdown(payload), encoding="utf-8")
+        (args.out / "professional_report.md").write_text(report, encoding="utf-8")
         (args.out / "professional_handoff.md").write_text(render_handoff(payload), encoding="utf-8")
     except Exception as exc:
         failure = {"status": "blocked", "reason": "analysis_failed", "detail": str(exc)}
         (args.out / "professional_analysis.json").write_text(json.dumps(failure, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(failure, ensure_ascii=False), file=sys.stderr)
         return 1
-    print(json.dumps({"status": "completed", "out": str(args.out), "verdict": payload["verdict"]["status"]}, ensure_ascii=False))
+    print(json.dumps({
+        "status": "completed",
+        "out": str(args.out),
+        "verdict": payload["verdict"]["status"],
+        "visible_watermark": watermark_shown,
+        "watermark_state_persisted": watermark_persisted,
+    }, ensure_ascii=False))
     print()
-    print(render_markdown(payload))
+    print(report)
     return 0
 
 

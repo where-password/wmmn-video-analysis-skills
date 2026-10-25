@@ -224,3 +224,7 @@ Before a row is treated as one promptable shot, check for contradictions:
 If a segmentation/motion conflict is found, mark `review_required` and `needs_resplit`, explain the conflict, and do not generate a prompt for that row until the boundary is rechecked. If prompt-critical observations are missing, use `needs_observation` and suppress the prompt. Do not paper over segmentation errors with more prose.
 
 The generated prompt pack must include the reverse-analysis notice: it is for analyzing the reference video, not a guarantee of reproduction; users should replace assets and optimize prompts for their own work and target tools.
+
+## Visible watermark
+
+The user-facing `professional_report.md` receives the `wmmn · 我密码呢` footer only on the first successful report for an installation. Later reports and `professional_handoff.md` do not repeat it. Machine-readable JSON attribution and evidence-frame image marking remain unchanged.

@@ -23,7 +23,7 @@ class EvidenceFrameTests(unittest.TestCase):
         self.assertLessEqual(times[0][1], times[1][1])
         self.assertLessEqual(times[1][1], times[2][1])
 
-    def test_annotate_frame_keeps_watermark_bar(self):
+    def test_annotate_frame_keeps_shot_metadata_bar(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "frame.jpg"
             Image.new("RGB", (320, 180), (40, 80, 120)).save(path)

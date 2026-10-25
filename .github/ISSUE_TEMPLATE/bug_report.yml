@@ -12,6 +12,7 @@ body:
       label: Skill
       options:
         - general-video-analysis
+        - long-video-index
         - professional-video-analysis
     validations:
       required: true
@@ -19,7 +20,7 @@ body:
     id: version
     attributes:
       label: Skill version
-      placeholder: "0.4.0"
+      placeholder: "0.4.5"
     validations:
       required: true
   - type: textarea
