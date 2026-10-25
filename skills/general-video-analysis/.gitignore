@@ -1,3 +1,4 @@
+.state/
 .deps/
 .venv/
 __pycache__/

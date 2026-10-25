@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from build_overview import render_overview, validate_content
+from build_overview import apply_first_run_notice, render_overview, validate_content
 from scan import classify, load_media_manifest, normalize_source_url, render_blocked_markdown, render_markdown
 
 
@@ -83,13 +83,28 @@ class ScanUnitTests(unittest.TestCase):
         for rel in ["SKILL.md", "README.md", "NOTICE.md", "agent-manifest.json", "scripts/scan.py", "scripts/build_overview.py", "references/first-run-notice.md"]:
             self.assertIn("wmmn", (ROOT / rel).read_text(encoding="utf-8"))
 
-    def test_first_run_notice_has_source_and_compatibility_guidance(self):
+    def test_first_run_notice_has_source_and_copyright_guidance(self):
         notice = (ROOT / "references" / "first-run-notice.md").read_text(encoding="utf-8")
         self.assertIn("历史记录、点赞或收藏", notice)
         self.assertIn("B站", notice)
-        self.assertIn("WorkBuddy", notice)
-        self.assertIn("GitHub Issues", notice)
+        self.assertIn("版权", notice)
+        self.assertIn("公司、商业", notice)
+        self.assertIn("抖音私信", notice)
         self.assertIn("我密码呢", notice)
+
+    def test_first_run_notice_is_appended_once_per_installation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp) / ".state" / "first-run-v1.json"
+            first, shown_first, persisted_first = apply_first_run_notice("BASE", state, "auto")
+            second, shown_second, persisted_second = apply_first_run_notice("BASE", state, "auto")
+            self.assertTrue(shown_first)
+            self.assertTrue(persisted_first)
+            self.assertTrue(state.is_file())
+            self.assertTrue(first.startswith("BASE"))
+            self.assertIn("视频来源与使用边界", first)
+            self.assertFalse(shown_second)
+            self.assertTrue(persisted_second)
+            self.assertEqual(second, "BASE")
 
     def test_internal_structure_markdown_keeps_watermark(self):
         payload = {

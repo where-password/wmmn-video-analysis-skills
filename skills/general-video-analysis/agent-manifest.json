@@ -1,6 +1,6 @@
 {
   "name": "general-video-analysis",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "role": "Broad video content overview with optional soft routing",
   "entrypoint": {
     "command": "python",
@@ -136,5 +136,12 @@
       "platform": "刺猬猫",
       "note": "恋爱喜剧；喜欢可以支持，不喜欢也欢迎直接吐槽。"
     }
-  ]
+  ],
+  "first_run_policy": {
+    "mode": "auto",
+    "placement": "end",
+    "state_file": ".state/first-run-v1.json",
+    "once_per_installation": true,
+    "fallback": "repeat_if_state_cannot_be_persisted"
+  }
 }

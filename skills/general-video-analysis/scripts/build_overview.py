@@ -6,7 +6,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -202,11 +204,46 @@ def render_overview(content: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def first_run_state_path(explicit: Path | None = None) -> Path:
+    override = os.environ.get("WMMN_FIRST_RUN_STATE")
+    if explicit is not None:
+        return explicit.resolve()
+    if override:
+        return Path(override).expanduser().resolve()
+    return Path(__file__).resolve().parent.parent / ".state" / "first-run-v1.json"
+
+
+def read_first_run_notice() -> str:
+    path = Path(__file__).resolve().parent.parent / "references" / "first-run-notice.md"
+    return path.read_text(encoding="utf-8").strip()
+
+
+def apply_first_run_notice(text: str, state_path: Path, mode: str = "auto") -> tuple[str, bool, bool]:
+    if mode == "never":
+        return text, False, True
+    if mode == "auto" and state_path.exists():
+        return text, False, True
+    notice = read_first_run_notice()
+    combined = text.rstrip() + "\n\n---\n\n" + notice + "\n"
+    persisted = True
+    try:
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        state_path.write_text(
+            json.dumps({"shown_at": datetime.now(timezone.utc).isoformat()}, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        persisted = False
+    return combined, True, persisted
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--analysis-json", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--first-run", choices=["auto", "always", "never"], default="auto", help="Append the first-run notice once per installation")
+    parser.add_argument("--first-run-state", type=Path, default=None, help="Override the first-run marker path")
     args = parser.parse_args()
     try:
         data = json.loads(args.analysis_json.read_text(encoding="utf-8-sig"))
@@ -229,11 +266,16 @@ def main() -> int:
             "detail": "video_overview.md already exists; pass --overwrite to replace it.",
         }, ensure_ascii=False), file=sys.stderr)
         return 2
-    destination.write_text(render_overview(content), encoding="utf-8")
+    rendered = render_overview(content)
+    state_path = first_run_state_path(args.first_run_state)
+    rendered, notice_shown, state_persisted = apply_first_run_notice(rendered, state_path, args.first_run)
+    destination.write_text(rendered, encoding="utf-8")
     print(json.dumps({
         "status": "completed",
         "out": str(out),
         "artifact": "video_overview.md",
+        "first_run_notice": notice_shown,
+        "first_run_state_persisted": state_persisted,
     }, ensure_ascii=False))
     return 0
 

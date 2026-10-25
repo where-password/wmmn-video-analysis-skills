@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.9 - 2026-10-25
+
+- Make the first-run notice deterministic: append it to the end of the first overview and mark it as shown.
+- Store the one-time marker under the Skill .state directory and ignore it from source control.
+- Narrow the first-run notice to video source/copyright responsibility and Douyin DM feedback.
+
 ## 0.2.8 - 2026-10-25
 
 - Fix Windows CI path comparison for resolved temporary media paths.

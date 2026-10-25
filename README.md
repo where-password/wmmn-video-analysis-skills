@@ -14,6 +14,7 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 - **Video link:** Use the desktop web URL of the exact target video. On Douyin, open the video from History, Likes, or Favorites and copy the in-video share link. On Bilibili, use the specific video page URL. Do not use a homepage, recommendation feed, search result, or screenshot as the source.
 - **Feedback:** Questions and suggestions are welcome in the public comments or GitHub Issues. The project will keep improving from real cases.
 - **Compatibility:** WorkBuddy, Doubao Work, and other agent hosts have not yet been tested. You can try them; please report successful or failed runs on GitHub.
+- **Copyright responsibility:** This project provides analysis tooling only and does not grant rights to source videos. Analyze only media you are authorized to access. Results are for personal study, research, and discussion; organizational or commercial use requires the user to verify copyright, licensing, and compliance. The author is not responsible for third-party use of videos or results.
 
 **中文使用提醒：**
 
@@ -25,7 +26,7 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.8 working version |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.9 working version |
 | [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.1 |
 | Long Video Index | Transcript-backed long-video index, timestamp lookup, and evidence trail | In development; not included in the current public release |
 
@@ -109,7 +110,7 @@ These fields exist for machine use and routing context. They are not part of the
 
 ## Validation
 
-The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **61 tests**.
+The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **62 tests**.
 
 - General Skill: 24 tests for content-first overview, structured IP/people recognition, stance/tone grounding, narrow routing, examples, and first-run guidance.
 - Professional Skill: schemas, progressive batching, evidence coverage, mechanics, and handoff gates.

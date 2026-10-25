@@ -47,9 +47,11 @@ Technical structure is for internal routing and downstream analysis only.
 
 ## First successful use
 
-After installation, on the first successful use in a host or conversation, show the contents of `references/first-run-notice.md` once before the video overview. Do not repeat it on later outputs in the same conversation. If the host can persist a first-run marker, use it; otherwise treat the first successful overview in the conversation as the first run.
+`build_overview.py` defaults to `--first-run auto`. On the first successful overview for an installation, it appends `references/first-run-notice.md` to the end of `video_overview.md`, writes a small marker at `.state/first-run-v1.json`, and does not repeat the notice afterwards.
 
-Keep the author line short and non-promotional. Mention the author Douyin and DM feedback only; do not advertise the novel in generated outputs.
+If the host cannot persist the marker, the overview still succeeds but reports `first_run_state_persisted: false`; the notice may appear again on the next run. Do not duplicate the notice manually when the generator already appended it.
+
+The notice covers two points only: video source/copyright responsibility, and Douyin DM feedback. Do not add the novel or other promotion to generated outputs.
 
 ## Workflow
 
