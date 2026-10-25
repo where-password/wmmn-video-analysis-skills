@@ -1,58 +1,140 @@
 {
   "name": "general-video-analysis",
-  "version": "0.1.2",
-  "role": "Fast video structure scan and applicability router",
+  "version": "0.2.7",
+  "role": "Broad video content overview with optional soft routing",
   "entrypoint": {
     "command": "python",
     "args": [
       "scripts/scan.py"
     ]
   },
+  "tools": {
+    "scan": "scripts/scan.py",
+    "build_overview": "scripts/build_overview.py"
+  },
   "required": [
     "out"
   ],
-  "outputs": [
-    "quick_scan.md",
-    "quick_scan.json",
-    "quick_contact_sheet.jpg"
-  ],
-  "statuses": [
-    "not_applicable_for_professional_analysis",
-    "general_only",
-    "professional_candidate",
-    "long_video_candidate",
-    "blocked"
-  ],
-  "recommends": [
-    "professional-video-analysis",
-    "long-video-index"
-  ],
-  "boundaries": [
-    "no professional critique",
-    "no generic film review",
-    "no long-form corpus",
-    "no browser automation",
-    "no cookie-profile fallback"
-  ],
-  "host_adapter_contract": "ACQUISITION_CONTRACT.md",
-  "url_flow": "URL -> host viewer/media adapter -> readable media_path -> scan.py",
-  "inputs": [
-    "source_or_media_manifest",
-    "out"
-  ],
-  "optional": [
-    "window",
-    "media_manifest"
-  ],
-  "media_contract": "schemas/media_handle.schema.json",
   "input_any_of": [
     "source",
     "media_manifest"
   ],
-  "user_facing_contract": "Show quick_scan.md in chat and embed quick_contact_sheet.jpg; do not only list files.",
+  "outputs": {
+    "user_facing": [
+      "video_overview.md"
+    ],
+    "machine": [
+      "content_analysis.json",
+      "quick_scan.json"
+    ],
+    "internal": [
+      "quick_scan.md",
+      "quick_contact_sheet.jpg",
+      "frames/"
+    ]
+  },
+  "content_contract": "schemas/content_analysis.schema.json",
+  "content_guide": "references/content-overview-guide.md",
+  "user_facing_contract": "Show only video_overview.md. Keep technical structure and raw JSON internal unless the user explicitly asks.",
+  "routing_authority": "content_analysis.json",
+  "recommendation_policy": {
+    "derived_from": "routing",
+    "optional": true,
+    "allows_both": true,
+    "auto_invoke": false,
+    "duration_alone_is_insufficient": true,
+    "general_montage_does_not_trigger_comic_skill": true
+  },
+  "recommends": [
+    "professional-video-analysis",
+    "long-video-index"
+  ],
+  "host_definition": "The agent/model runtime and its media-access tools, not the end user.",
+  "observation_policy": "The model inspects frames, subtitles, transcript, or audio and authors content_analysis.json. Do not ask the user to fill observable technical fields.",
+  "boundaries": [
+    "no technical specs or shot statistics in the user-facing overview",
+    "no object list presented as video theme",
+    "no creative-intent or quality judgment",
+    "no automatic professional Skill invocation",
+    "no invented content when evidence is insufficient",
+    "no browser automation or cookie access",
+    "no unsupported value framing",
+    "no genre-based moral elevation",
+    "no specialist recommendation for general live-action montages"
+  ],
   "watermark": {
     "author": "我密码呢",
     "mark": "wmmn"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "statuses": [
+    "completed",
+    "limited",
+    "blocked"
+  ],
+  "content_analysis_fields": [
+    "one_sentence",
+    "summary",
+    "content_type",
+    "themes",
+    "content_mode",
+    "content_stance",
+    "content_tone",
+    "mocking_targets",
+    "tone_basis",
+    "ip_context",
+    "routing",
+    "basis"
+  ],
+  "content_modes": [
+    "original",
+    "remix",
+    "meme",
+    "adaptation",
+    "unknown"
+  ],
+  "routing_fields": [
+    "comic_aigc_led",
+    "longform_knowledge"
+  ],
+  "source_link_policy": "On Douyin, open the exact target from History or Favorites and copy the in-video share link; Featured, creator profile, recommendation-feed, search-result, and screenshot sources are not reliable video identifiers.",
+  "ip_context_fields": [
+    "works",
+    "characters",
+    "people",
+    "domains",
+    "confidence",
+    "evidence"
+  ],
+  "ip_coverage": [
+    "anime",
+    "tokusatsu",
+    "comics",
+    "novels",
+    "film_tv",
+    "games",
+    "esports",
+    "entertainment",
+    "rap",
+    "internet_creators",
+    "vtuber",
+    "public_figures"
+  ],
+  "first_run_notice": "references/first-run-notice.md",
+  "feedback_channels": [
+    "public_comments",
+    "github_issues"
+  ],
+  "tested_hosts_note": "WorkBuddy, Doubao Work, and other agent hosts are not yet tested; report successful or failed runs on GitHub.",
+  "author_accounts": {
+    "douyin": "我密码呢",
+    "feedback": "DM or GitHub Issues"
+  },
+  "author_other_works": [
+    {
+      "title": "东京，我的男主浓度严重超标",
+      "platform": "刺猬猫",
+      "note": "恋爱喜剧；喜欢可以支持，不喜欢也欢迎直接吐槽。"
+    }
+  ]
 }

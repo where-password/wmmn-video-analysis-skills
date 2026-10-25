@@ -1,173 +1,200 @@
 ---
 name: general-video-analysis
-description: Quickly scan any video into a short structural card. Use when a user drops one or more videos without a precise professional request, or when a host needs a cheap applicability check before routing to a professional or long-video skill. This skill does not perform professional critique or content-value judgments.
+description: Analyze what a video is actually about and return a concise content overview with a one-sentence judgment, a summary paragraph, content type, themes, and optional soft next-step suggestions. Use for general video questions, mixed or unusual video formats, and triage before a specialized professional or long-video workflow. Keep technical structure internal.
 metadata:
   author: "我密码呢 (wmmn)"
   watermark: "wmmn / 我密码呢"
   license: "MIT"
-  short-description: "Fast video structure scan and applicability router"
+  short-description: "Broad video content overview and soft routing"
 ---
 
 # General Video Analysis
 
-## What it does
+## Purpose
 
-Given a video, return a **short structural card**:
+Answer the user's main question:
 
-- duration, resolution, FPS
-- detected shots and cuts
-- cut density
-- median shot length
-- a sampled contact sheet
-- applicability status
-- a recommendation for a more specialized skill when justified
+> What is this video about?
 
-It is a triage and routing service, not a professional analysis engine.
+The output should be a concise, useful content overview, not a technical scan report and not a professional shot breakdown.
 
-## What it does not do
+Broad does **not** mean listing everything visible. Broad means the Skill can handle narratives, knowledge explainers, interviews, vlogs, scenery, products, commentary, memes, silent footage, and unusual formats while still identifying the actual content.
 
-- No narrative, aesthetic, humor, retention, or "why it went viral" judgment.
-- No OCR, VLM, camera-motion classification, or continuity audit.
-- No corpus building for tens or hundreds of hours.
-- No generic pros/cons or "how to improve" advice.
-- No claim that a sampled window describes a whole long video.
+## User-facing output
 
-## When to use
+The user should see only:
 
-Use when:
+- one-sentence content judgment;
+- one content-summary paragraph;
+- content type;
+- content themes;
+- related IP/works, characters, or people when evidence supports them;
+- content tone;
+- mocking/play targets when applicable;
+- optional, softly worded professional directions;
+- two short limitation notes;
+- the wmmn watermark.
 
-- the user drops a video without a precise request;
-- the host needs a cheap applicability check;
-- the host needs to decide whether to route to a professional or long-video skill.
+Do not show:
 
-Do not use when:
+- duration, resolution, FPS, codec, or file size;
+- shot count, cut count, cut density, or median shot length;
+- analysis windows, shot rows, keyframes, or contact-sheet coordinates;
+- object lists, character lists, visible-action lists, or key-segment tables;
+- camera, transition, prompt, storyboard, or continuity analysis.
 
-- the user already requested a specific professional breakdown;
-- the video is a long series that needs a transcript-first index;
-- the user expects an authoritative creative critique.
+Technical structure is for internal routing and downstream analysis only.
 
-## Host media adapter
+## First successful use
 
-The user should only need to provide a URL. The host must use its existing video-viewer or media-access capability to turn that URL into a readable media handle, then call this skill. The skill does not ask the user to choose cookies, browsers, or local export paths.
+After installation, on the first successful use in a host or conversation, show the contents of `references/first-run-notice.md` once before the video overview. Do not repeat it on later outputs in the same conversation. If the host can persist a first-run marker, use it; otherwise treat the first successful overview in the conversation as the first run.
 
-See `ACQUISITION_CONTRACT.md`. If the host cannot produce a readable media file, return `blocked`; do not fabricate structure or commentary.
-## Command
+Keep the author line short and non-promotional. Mention the author Douyin and DM feedback only; do not advertise the novel in generated outputs.
+
+## Workflow
+
+1. Acquire a readable media handle from the exact target video. Ask for the link copied from that video page, not a homepage, recommendation feed, search result, or screenshot. On Douyin, prefer opening the target from History or Favorites and using the in-video share link; avoid Featured, creator profile, and recommendation-feed URLs.
+2. Run `scripts/scan.py` to create internal structure data and a contact sheet.
+3. The **model** inspects the contact sheet, video, subtitles, transcript, or audio that the host can actually access. The user is not asked to hand-write scene, character, action, or shot fields.
+4. The model writes `content_analysis.json` following `schemas/content_analysis.schema.json` and `references/content-overview-guide.md`.
+5. Run `scripts/build_overview.py` to render `video_overview.md`.
+6. Show the content of `video_overview.md` in the chat. Do not show `quick_scan.md` or raw JSON unless the user explicitly asks.
+
+## Host meaning
+
+In this Skill, **host** means the agent or model runtime and its media-access tools. It does not mean the end user.
+
+The model owns observation and drafting. The user may clarify a genuinely ambiguous point, but should not be assigned the work of filling a structured observation file.
+
+If the model cannot inspect enough visual or transcript evidence, return a limited content overview and state the missing evidence plainly. Do not invent the topic.
+
+## Commands
+
+Internal structure scan:
 
 ```bash
 python scripts/scan.py --source "<LOCAL_VIDEO_OR_URL>" --out "<OUTPUT_DIR>"
 ```
 
-Useful options:
-
-```bash
---window 0:30
---max-analysis-sec 120
-```
-
-URL handling is intentionally simple:
-
-- URLs are passed through unchanged; this skill contains no platform-specific normalization.
-- The host/yt-dlp acquisition layer handles platform-specific URL quirks. This skill does not contain platform-specific normalization.
-- The skill attempts public URL access only.
-- It does not inspect cookies, launch a browser, or retry through browser profiles.
-- If the URL is not directly accessible, return `blocked`; the host may supply a local media handle instead.
-- A local video may be passed directly when the host has one.
-
-## Outputs and user presentation
-
-```text
-quick_scan.md
-quick_scan.json
-quick_contact_sheet.jpg
-frames/
-```
-
-After a successful run, **show the content of `quick_scan.md` directly in the chat and embed `quick_contact_sheet.jpg`**. Do not merely list file paths. The user-facing answer is the Markdown card plus the image; the JSON is for the host.
-
-## Runtime policy
-
-- Dependencies must be installed before the run; do not `pip install` during analysis.
-- The fast scan should sample 8 frames and run one scene-detection pass.
-- Default target for a local 1-2 minute 720p video: roughly 10-60 seconds, excluding host-side media acquisition.
-
-`quick_scan.json` includes:
-
-- `status`
-- `media`
-- `structure`
-- `shot_rows`: per-shot absolute `start`, `end`, and `duration` values for downstream professional analysis
-- `applicability`
-- `artifacts`
-- `limitations`
-
-## User-facing format
-
-The chat response must start with a complete one-line judgment, not metadata:
-
-```text
-这是一条约 60 秒的高密度快剪/混剪视频，核心靠连续切镜和画面变化推进。
-
-结构判断：约 58 个镜头、57 个切点，平均 0.8 秒一个镜头。
-具体题材（整活、风景、音乐等）不能只靠镜头结构可靠确认。
-
-适不适合专业拆解：适合。
-如果要继续：建议使用 professional-video-analysis，拆镜头、节奏和复刻结构。
-不能保证：不判断网感、幽默、个人风格或传播效果。
-```
-
-Do not lead with duration, resolution, FPS, file links, or raw JSON. Put technical values in the basis line only.
-
-## Applicability statuses
-
-- `not_applicable_for_professional_analysis`: single shot/static video; explain why and give the short structure.
-- `general_only`: some structure, but not enough evidence for a professional route.
-- `professional_candidate`: multiple shots or meaningful cut density; recommend `professional-video-analysis` only as a possible next step.
-- `long_video_candidate`: video is over 30 minutes; recommend a transcript-first long-video index instead of deep shot analysis.
-
-For `professional_candidate`, the recommendation must say:
-
-- the professional skill covers rigid production structure only;
-- it cannot reproduce humor, net sense, personality, or guarantee audience response.
-
-## Hard boundaries
-
-- A short scan is not a full-video analysis.
-- A sampled window is labeled `sampled: true`.
-- A structural signal does not prove creative intent.
-- If media cannot be accessed, return `blocked` with the reason; do not invent frames or commentary. Built-in browser playback does not guarantee that the media stream is accessible to the skill.
-- The host owns user dialogue, final routing, generation, and delivery.
-
-## Dependencies
-
-Core:
-
-```bash
-pip install -r requirements.txt
-```
-
-Optional URL acquisition:
-
-```bash
-pip install yt-dlp
-```
-
-System media tools: `ffmpeg` is recommended; `imageio-ffmpeg` can provide it on Python.
-
-
-
-## Media manifest input
-
-When a browser or viewer has already acquired the media, pass its host manifest:
+Host-provided readable media:
 
 ```bash
 python scripts/scan.py --media-manifest "<MEDIA_HANDLE_JSON>" --out "<OUTPUT_DIR>"
 ```
 
-The manifest contract is in `schemas/media_handle.schema.json`, with an example at `examples/media_handle.example.json`. Browser/DevTools extraction is a host-side provider; it is not implemented inside this analysis skill.
+Render the user-facing overview after model observation:
 
+```bash
+python scripts/build_overview.py \
+  --analysis-json "<OUTPUT_DIR>/content_analysis.json" \
+  --out "<OUTPUT_DIR>"
+```
 
+## Content analysis contract
 
+`content_analysis.json` is written by the model, not by the user. It contains:
 
-## Related skills
+- `one_sentence`: the complete one-line judgment;
+- `summary`: the content paragraph;
+- `content_type`: natural language type labels;
+- `themes`: the actual topics or subject matter;
+- `ip_context`: optional works, characters, people, domains, confidence, and evidence for recognizable IP or public figures;
+- `basis`: `video`, `transcript`, `audio`, and/or `user_context`;
+- `content_mode`: `original`, `remix`, `meme`, `adaptation`, or `unknown`;
+- `content_stance`: `supportive`, `critical`, `mocking`, `neutral`, `mixed`, or `unknown`;
+- `content_tone`: the actual tone labels, such as `调侃`, `恶搞`, `伤感`, or `中性记录`;
+- `mocking_targets`: optional targets of teasing or parody;
+- `tone_basis`: observable signals supporting a non-neutral stance;
+- `routing.comic_aigc_led`: whether the content is comic/animation/AIGC and could benefit from the specialized production Skill;
+- `routing.longform_knowledge`: whether transcript-backed long-form lookup could be useful.
 
-This general skill is the entry point. When the video has measurable professional structure, recommend the host route it to `professional-video-analysis`. When it is a long corpus/index task, recommend `long-video-index`. Both are planned and are not silently installed or invoked by this package.
+The renderer derives soft specialist suggestions from `routing`; the model does not need to remember a separate recommendations field.
+
+Do not put technical structure in this file.
+
+## How to describe content
+
+Describe what the video says, tells, demonstrates, or presents. Do not turn visible objects into the subject.
+
+Examples:
+
+- A dog sticker with human voice-over may be about relationships, not dogs.
+- A person waving in a room is not inherently a meaningful action; the content comes from what the video says or shows overall.
+- A silent scenery video can still have clear content: a landscape, travel mood, or ambient visual experience.
+- A vlog can be summarized by the day, experience, or point of view it records.
+
+Set `content_mode` separately from the surface genre:
+
+- `original`: a self-contained original work;
+- `remix`: familiar scenes, characters, plot, nationality, universe, cast, or visual system are replaced;
+- `meme`: the main result is a joke, absurd contrast, reaction, or Internet-style bit;
+- `adaptation`: a direct adaptation or re-edit;
+- `unknown`: the source relationship cannot be established.
+
+A cross-system remix can look like a serious genre piece. If familiar military scenes are replaced with American soldiers while keeping the original plot, describe it as a remix and state the actual entertainment effect. Do not infer growth, discipline, family legacy, or similar depth merely from the military setting.
+
+Themes must reflect the video's actual content and viewing purpose. For a remix or meme, terms such as `整活`, `反差`, `影视二创`, and `恶搞` can be more accurate than genre-based moral themes. Surface story belongs in the summary; the theme should describe what the video is functionally doing.
+
+Do not guess a source title unless it is recognizable from the evidence or supplied by the user. If the source relationship is unclear, use cautious wording and set `content_mode: unknown`.
+
+For unusual or ambiguous footage, use a tentative but useful summary and state what is uncertain. Do not force it into a known genre.
+
+## Recognize popular IP and public figures
+
+Use recognizable canonical names when the evidence supports them. This includes anime, tokusatsu, novels, comics, film/TV, games, esports, entertainment, rap, internet creators, and virtual personas.
+
+Identify at four levels:
+
+- work/franchise;
+- character;
+- real person or virtual persona;
+- broad domain.
+
+Do not reduce a known IP to “several characters”, “an anime figure”, or “a celebrity”. Do not guess between similar costumes, recolored designs, AI-redrawn characters, or lookalike people from a single frame. If only the franchise is certain, name the franchise and leave the character list empty. If confidence is low, use cautious wording and mark it low.
+
+## No unsupported value framing
+
+Do not infer a positive or moral purpose from genre alone.
+
+Examples of unsupported elevation:
+
+- military footage does not automatically mean growth or discipline;
+- an e-sports montage does not automatically mean support or encouragement;
+- a fan remix does not automatically mean tribute;
+- a joke video does not automatically carry a serious social message.
+
+Use the actual stance and tone. If adapted lyrics, captions, editing contrast, or user context show teasing, describe it as teasing. If the evidence is insufficient, use `unknown` and cautious wording. Do not infer malice from teasing either.
+
+## Professional directions
+
+The model sets routing flags from content:
+
+- `comic_aigc_led: true` for comic, animation, AIGC, or comic/AIGC-oriented remixes where professional production analysis could help. Do not set it for a general live-action MV, e-sports montage, vlog, or product video merely because it has editing;
+- `longform_knowledge: true` for knowledge-heavy long content where transcript-backed lookup could help;
+- both can be true.
+
+The renderer creates soft suggestions automatically:
+
+- comic/AIGC-led -> professional video analysis;
+- long-form knowledge -> long video index;
+- both -> both directions;
+- neither -> no specialist suggestion.
+
+Duration alone does not determine the route. A long comic series can still be production-led and not a long-video index request.
+
+Never invoke another Skill automatically. The user decides whether to continue.
+
+## Failure response
+
+If media cannot be read, return a soft blocked message:
+
+```text
+这次暂时没有取得可读取的视频媒体，因此无法完成内容概览。
+可以改为提供可读的本地媒体文件、宿主媒体句柄或公开链接后重试。
+```
+
+If media is readable but content evidence is thin, return a limited overview instead of a technical dump or invented summary.
+
+## Attribution
+
+wmmn · 我密码呢

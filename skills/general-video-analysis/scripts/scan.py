@@ -124,90 +124,92 @@ def make_contact_sheet(ffmpeg: str, media: Path, out: Path, start: float, durati
     return relative_posix(result, out)
 
 
-def classify(duration: float, shots: int, cuts: int) -> dict[str, Any]:
-    cuts_per_minute = cuts * 60.0 / duration if duration else 0.0
-    seconds = int(round(duration))
+def classify(duration: float, shots: int, cuts: int, source_duration: float | None = None) -> dict[str, Any]:
+    """Return an internal structural label only. Content routing is decided elsewhere."""
+    analysis_duration = max(0.0, float(duration or 0.0))
+    full_duration = max(analysis_duration, float(source_duration or analysis_duration))
+    cuts_per_minute = cuts * 60.0 / analysis_duration if analysis_duration else 0.0
+    seconds = int(round(full_duration))
     if shots <= 1:
         return {
             "status": "not_applicable_for_professional_analysis",
             "label": "single_shot",
-            "headline": f"这是一条约 {seconds} 秒的固定机位、单镜头内容，镜头语言信息很少。",
+            "headline": f"这是一条约 {seconds} 秒的单镜头视频，未检测到镜头切换。",
             "reason": "single_shot_or_no_detected_cut",
-            "recommendation": None,
-        }
-    if duration > 1800:
-        return {
-            "status": "long_video_candidate",
-            "label": "long_video",
-            "headline": f"这是一条超过 {seconds // 60} 分钟的长视频，适合先做索引和定位，不适合直接逐镜深拆。",
-            "reason": "duration_over_30_minutes",
-            "recommendation": {
-                "skill": "long-video-index",
-                "why": "这类长视频更适合先做逐字稿索引、主题定位和快速筛查。",
-                "limits": ["本次快速扫描不建立语料库，也不做长视频检索。"],
-            },
+            "internal_only": True,
         }
     if cuts_per_minute >= 20.0:
         label = "fast_cut"
-        headline = f"这是一条约 {seconds} 秒的高密度快剪/混剪视频，核心靠连续切镜和画面变化推进。"
+        headline = f"这是一条约 {seconds} 秒的高密度多镜头视频。"
     elif cuts_per_minute >= 6.0:
         label = "edited_video"
-        headline = f"这是一条约 {seconds} 秒的多镜头剪辑视频，节奏偏快。"
+        headline = f"这是一条约 {seconds} 秒的多镜头剪辑视频。"
     else:
         label = "multi_shot"
-        headline = f"这是一条约 {seconds} 秒的多镜头视频，剪辑节奏相对平稳。"
+        headline = f"这是一条约 {seconds} 秒的多镜头视频。"
     professional = shots >= 4 or cuts_per_minute >= 6.0
     return {
         "status": "professional_candidate" if professional else "general_only",
         "label": label,
         "headline": headline,
         "reason": "multiple_shot_structure",
-        "recommendation": {
-            "skill": "professional-video-analysis",
-            "why": "有明确的多镜头和可测剪辑结构，适合继续拆镜头、节奏、运镜和复刻方案。",
-            "limits": [
-                "专业 Skill 只覆盖可测量的制作结构。",
-                "它不能复刻幽默、网感、个人风格，也不能保证传播效果。",
-            ],
-        } if professional else None,
+        "internal_only": True,
     }
 
 
 def render_markdown(payload: dict[str, Any]) -> str:
+    """Render the internal structural debug card. Do not show this file to end users."""
     structure = payload["structure"]
     applicability = payload["applicability"]
-    recommendation = applicability.get("recommendation")
+    sampled = bool(structure.get("sampled"))
+    window_start = structure.get("window_start_sec")
+    window_end = structure.get("window_end_sec")
+    scope = structure.get("window_duration_sec")
     lines = [
-        "# 视频判断",
+        "# 内部结构扫描",
         "",
-        applicability.get("headline", "这是一条结构信息不足的视频。"),
+        "> 仅供模型和脚本内部使用，不直接展示给用户。最终内容概览与专业方向建议以 `content_analysis.json` 和 `video_overview.md` 为准。",
         "",
-        "## 结构判断",
-        "",
-        f"检测到约 {structure.get('shots')} 个镜头、{structure.get('cuts')} 个切点，平均 {structure.get('median_shot_sec')} 秒一个镜头。",
-        "具体题材（整活、风景、音乐等）不能只靠镜头结构可靠确认；如果宿主有标题、字幕或内容说明，可以再补充。",
-        "",
-        "## 适不适合专业拆解",
+        "## 结构数据",
         "",
     ]
-    if recommendation:
-        lines.extend([
-            f"适合继续做专业拆解，推荐 `{recommendation['skill']}`。",
-            f"原因：{recommendation['why']}",
-        ])
+    if sampled:
+        lines.append(
+            f"本次扫描 {window_start}–{window_end} 秒的抽样窗口（约 {scope} 秒），"
+            f"检测到 {structure.get('shots')} 个镜头、{structure.get('cuts')} 个切点。"
+        )
     else:
-        lines.append("不建议继续做镜头语言专业拆解；当前结构信号不足，或更适合文本/内容整理流程。")
+        lines.append(
+            f"检测到约 {structure.get('shots')} 个镜头、{structure.get('cuts')} 个切点，"
+            f"平均 {structure.get('median_shot_sec')} 秒一个镜头。"
+        )
     lines.extend([
         "",
-        "## 不能保证",
+        "## 内部结构标签",
         "",
-        "不能判断为什么好看、为什么好笑、是否有网感、能否传播，也不能复刻创作者的个人风格。",
+        f"- label: {applicability.get('label')}",
+        f"- structural_status: {applicability.get('status')}",
+        f"- structural_reason: {applicability.get('reason')}",
     ])
-    if recommendation:
-        lines.extend(["", "## 限制", ""])
-        lines.extend(f"- {item}" for item in recommendation.get("limits", []))
-    lines.extend(["", "---", "> wmmn · 我密码呢"])
+    lines.extend([
+        "",
+        "## 路由规则",
+        "",
+        "内容类型和最终专业方向建议必须由模型查看画面、字幕或逐字稿后写入 content_analysis.json；不得仅凭时长、镜头数或切点密度向用户推荐专业 Skill。",
+        "",
+        "---",
+        "> wmmn · 我密码呢",
+    ])
     return "\n".join(lines) + "\n"
+
+
+def render_blocked_markdown(payload: dict[str, Any]) -> str:
+    return (
+        "# 视频分析暂时无法继续\n\n"
+        "这次暂时没有取得可读取的视频媒体，因此无法完成内容概览。\n\n"
+        "可以改为提供可读取的视频文件或可公开访问的链接后重试。\n\n"
+        "---\n> wmmn · 我密码呢\n"
+    )
 
 
 def main() -> int:
@@ -283,7 +285,7 @@ def main() -> int:
             "cuts_per_minute": round(len(cuts) * 60.0 / duration, 2) if duration else 0.0,
             "median_shot_sec": round(sorted(shot_lengths)[len(shot_lengths) // 2], 3) if shot_lengths else None,
         }
-        applicability = classify(duration, shots, len(cuts))
+        applicability = classify(duration, shots, len(cuts), source_duration=full_duration)
         stage = time.perf_counter()
         contact = make_contact_sheet(ffmpeg, media, out, start, duration)
         timings["contact_sheet_sec"] = round(time.perf_counter() - stage, 3)
@@ -295,6 +297,7 @@ def main() -> int:
             "schema_version": "1.0",
             "status": "completed",
             "watermark": {"author": "我密码呢", "mark": "wmmn"},
+            "routing_authority": "content_analysis.json",
             "source": "<source>",
             "acquisition": {"mode": acquisition_mode, "media_sha256": media_sha256},
             "media": {"duration_sec": round(full_duration, 3), "width": info.get("width"), "height": info.get("height"), "fps": info.get("fps")},
@@ -312,13 +315,17 @@ def main() -> int:
         }
         write_json(out / "quick_scan.json", payload)
         (out / "quick_scan.md").write_text(render_markdown(payload), encoding="utf-8")
-        print(json.dumps({"status": "completed", "out": str(out), "applicability": applicability["status"], "timings_sec": timings}, ensure_ascii=False))
-        print()
-        print((out / "quick_scan.md").read_text(encoding="utf-8"))
+        print(json.dumps({
+            "status": "completed",
+            "out": str(out),
+            "next_step": "inspect_contact_sheet_then_write_content_analysis_json",
+            "timings_sec": timings,
+        }, ensure_ascii=False))
         return 0
     except Exception as exc:
-        failure = {"status": "blocked", "reason": "scan_failed", "detail": str(exc)}
+        failure = {"status": "blocked", "reason": "scan_failed", "detail": str(exc), "next_action": "provide_readable_media_handle"}
         write_json(out / "quick_scan.json", failure)
+        (out / "quick_scan.md").write_text(render_blocked_markdown(failure), encoding="utf-8")
         print(json.dumps(failure, ensure_ascii=False), file=sys.stderr)
         return 1
 

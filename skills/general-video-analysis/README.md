@@ -1,146 +1,218 @@
-# General Video Analysis Skill
+# General Video Analysis
 
-一个面向 Agent 宿主的轻量视频结构分析 Skill。
+一个面向普通视频用户的泛用内容分析 Skill。
 
-它只回答一个很窄的问题：
+它只回答一个核心问题：
 
-> **这条视频在镜头结构上是什么类型，是否值得进入后续专业拆解？**
+> **这条视频讲了什么？**
 
-它不会判断视频为什么好看、为什么好笑、有没有网感，也不会生成叙事影评。
+输出是：
 
-## What it does
+- 一句话内容判断
+- 一段内容总结
+- 内容类型
+- 内容主题
+- 相关 IP / 人物（可确认时）
+- 内容基调
+- 调侃/玩梗对象（适用时）
+- 可选的专业方向建议
+- 两条简短说明
 
-- 读取视频元数据
-- 检测镜头与切点
-- 计算切镜密度和镜头时长中位数
-- 生成 8 帧联系表
-- 给出完整、简短的视频结构判断
-- 如果是多镜头内容，推荐后续 `professional-video-analysis`
-- 如果是超长视频，推荐 `long-video-index`
-- 如果是单镜头固定内容，明确返回“不适用”
+不向用户展示分辨率、镜头数、切点、关键帧或技术分析表。
 
-## What it does not do
+## 安装后第一次使用
 
-- 不评价叙事、审美、幽默、个人风格或传播效果
-- 不做 OCR、VLM 描述、运镜分类、转场分类或连续性审计
-- 不构建长视频语料库
-- 不自动读取 Cookie
-- 不启动后台浏览器
-- 不要求用户额外拖入本地 MP4
+第一次成功分析时，先展示一次以下提示：
 
-## Install
+> **使用提示 · 首次使用**
+>
+> - 请提供电脑网页版的目标视频链接。抖音建议从历史记录、点赞或收藏进入目标视频后复制链接；B站请使用具体视频页链接。不要把主页、推荐流、搜索结果页或截图当作视频链接。
+> - 有问题或建议，欢迎在评论区或 GitHub Issues 反馈，后续会继续优化。
+> - WorkBuddy、豆包工作版等 Agent 尚未测试；可以先尝试，成功或失败都欢迎反馈到 GitHub。
+> - 作者抖音：我密码呢。有问题可以通过抖音私信反馈，也欢迎在 GitHub Issues 留下复现信息。
+>
+> wmmn · 我密码呢
 
-```bash
-pip install -r requirements.txt
-```
 
-URL 获取能力是可选的：
+## 适用范围
 
-```bash
-pip install -r requirements-optional.txt
-```
+它可以处理：
 
-依赖必须提前安装。Skill 不应在分析过程中临时 `pip install`。
+- 剧情、动画、漫剧式内容
+- 知识讲解、教程
+- 访谈、对话、口播
+- 日常 vlog、旅行记录
+- 风景、氛围、无声视频
+- 产品展示、评测、观点评论
+- 段子、贴图口播、混合形式
+- 其他不容易归类的视频
 
-## Inputs
+广泛性来自对内容的理解，不是把画面里的物体全部列出来。
 
-### 1. Local media or public URL
+## 核心原则
 
-```bash
-python scripts/scan.py --source "<LOCAL_VIDEO_OR_PUBLIC_URL>" --out "<OUTPUT_DIR>"
-```
+### 写内容，不写物体
 
-### 2. Host-provided media manifest
+- 有狗贴图、但人声在讲异地恋，主题是异地恋沟通，不是狗。
+- 有人坐在镜头前挥手，动作本身不构成主题；要看视频说了什么。
+- 风景视频即使没人说话，也可以有明确内容：自然景观、旅行氛围或视觉体验。
 
-当宿主已经通过自己的视频查看、浏览器或 DevTools 能力取得媒体时，传入标准媒体句柄：
+### 不替视频上价值
 
-```bash
-python scripts/scan.py --media-manifest "<MEDIA_HANDLE_JSON>" --out "<OUTPUT_DIR>"
-```
+- 军事题材不等于成长、纪律或传承
+- 电竞出征不等于应援或打气
+- 粉丝混剪不等于致敬
+- 整活视频不等于有严肃社会表达
 
-媒体句柄契约见：
+内容主题写客观内容，内容基调写视频实际的调侃、恶搞、温情、严肃或中性状态。没有证据时保持谨慎，不补“支持、致敬、成长、正能量”等价值判断。
 
-- `ACQUISITION_CONTRACT.md`
-- `schemas/media_handle.schema.json`
-- `examples/media_handle.example.json`
+### 识别流行 IP 和公众人物
 
-这使 Skill 不绑定具体模型。GPT、Claude、Codex 或本地 helper 只要能产出同一个 `media_path`，就能使用它。
+能确认时，使用大家认识的标准名称，而不是“几位奥特曼”“某个动漫人物”“某个网红”这种泛称。覆盖范围包括：
 
-## User-facing output
+- 动漫、特摄、漫画、小说、电影、电视剧、游戏
+- 电竞、体育、娱乐圈、说唱、网红、虚拟主播
+- 作品/IP、角色、真人或虚拟人物、所属领域
 
-宿主必须把结构判断直接展示给用户，而不是只列文件。
+只根据标题、标签、字幕、用户说明、标志性服装或明确画面证据确认。相似皮套、换色角色、AI 重绘或相似人脸不能硬猜。只确认作品时写作品，不补角色；低置信度时使用“疑似”并标记 low。
 
-示例：
+### 技术结构只做内部参考
 
-```text
-这是一条约 60 秒的高密度快剪/混剪视频，核心靠连续切镜和画面变化推进。
+scan.py 仍会生成内部结构数据和联系表，供模型判断和后续专业 Skill 使用；这些内容不展示给用户。
 
-结构判断：
-检测到约 58 个镜头、57 个切点，平均 0.8 秒一个镜头。
-具体题材（整活、风景、音乐等）不能只靠镜头结构可靠确认。
+### 模型观察，不让用户填表
 
-适不适合专业拆解：
-适合，推荐 professional-video-analysis。
+这里的“宿主”指运行 Skill 的模型或 Agent 环境，不是最终用户。
 
-不能保证：
-不能判断为什么好看、为什么好笑、有没有网感，也不能复刻个人风格。
-```
+模型负责查看可访问的画面、字幕、逐字稿或音频，并写出 content_analysis.json。用户只需要在真正模糊的地方补充信息，不应该被要求手写场景、人物、动作等字段。
 
-## Files written
+## 使用流程
 
-```text
-quick_scan.md
-quick_scan.json
-quick_contact_sheet.jpg
-frames/
-```
+**视频链接要求：** 请先打开你真正想分析的视频，再从该视频页面复制分享链接。抖音建议从历史记录或收藏进入目标视频后复制链接；不要把精选、主播主页、推荐流、搜索结果页或截图当作视频链接。
 
-`quick_scan.json` 是机器接口；`quick_scan.md` 是用户可见卡片的主内容；联系表是视觉附件。
+### 1. 内部扫描
 
-## Optional arguments
+~~~bash
+python scripts/scan.py \
+  --source "<LOCAL_VIDEO_OR_URL>" \
+  --out "<OUTPUT_DIR>"
+~~~
 
-```bash
---window 0:30
---max-analysis-sec 120
---scene-threshold 0.35
-```
+输出：
+
+~~~text
+quick_scan.json          # 内部结构数据
+quick_scan.md            # 内部结构摘要，不展示给用户
+quick_contact_sheet.jpg  # 模型观察用联系表
+frames/                  # 抽样帧
+~~~
+
+### 2. 模型查看并写内容分析
+
+模型查看联系表、视频、字幕或逐字稿，然后按下面的契约写：
+
+~~~text
+schemas/content_analysis.schema.json
+examples/content_analysis.example.json
+references/content-overview-guide.md
+~~~
+
+### 3. 生成用户可见概览
+
+~~~bash
+python scripts/build_overview.py \
+  --analysis-json "<OUTPUT_DIR>/content_analysis.json" \
+  --out "<OUTPUT_DIR>"
+~~~
+
+生成：
+
+~~~text
+video_overview.md
+~~~
+
+在对话中直接展示这份 Markdown，不展示原始 JSON 或内部结构文件。
+
+## 内容分析契约
+
+~~~json
+{
+  "schema_version": "1.0",
+  "one_sentence": "一句话内容判断",
+  "summary": "一段内容总结",
+  "content_type": ["电竞恶搞 MV", "赛事音乐混剪", "粉丝二创"],
+  "themes": ["LPL 2026 国际赛表现", "粉丝整活", "赛事二创"],
+  "ip_context": {
+    "works": ["LPL", "《八千里路明月照》"],
+    "characters": [],
+    "people": [],
+    "domains": ["电子竞技", "赛事音乐混剪", "粉丝二创"],
+    "confidence": "high",
+    "evidence": ["用户提供的标题与赛事背景", "画面中的 LPL 赛事与选手"]
+  },
+  "content_mode": "meme",
+  "content_stance": "mocking",
+  "content_tone": ["调侃", "恶搞", "赛事吐槽"],
+  "mocking_targets": ["LPL 四支队伍的国际赛表现"],
+  "tone_basis": ["改编歌词以吐槽成绩为主", "失利画面与捧杯画面形成反差"],
+  "routing": {
+    "comic_aigc_led": false,
+    "longform_knowledge": false
+  },
+  "basis": ["video", "user_context"]
+}
+~~~
+
+content_stance 用于内部约束立场，content_tone 和 mocking_targets 用于用户可见的基调说明。非中性内容必须提供 tone_basis。
+
+专业建议由 routing 自动生成：comic_aigc_led 对应漫剧分析，longform_knowledge 对应长视频索引，两项可以同时为真，也可以都为空。
+
+## 专业方向建议
+
+模型只判断两个内部路由字段：
+
+- comic_aigc_led：仅当内容属于漫剧、动画、AIGC 或同类换皮整活，适合进入漫剧专业分析；普通真人 MV、电竞混剪、vlog、产品视频不因“有剪辑”而触发；
+- longform_knowledge：内容属于知识型长内容，可通过逐字稿索引定位。
+
+渲染器自动生成柔和建议：
+
+- comic_aigc_led：提示 professional-video-analysis；
+- longform_knowledge：提示 long-video-index；
+- 两者都有：两个方向都提示；
+- 都没有：不强行推荐。
+
+时长不是唯一依据。长系列漫剧如果目标是学习制作，仍然属于漫剧分析方向。Skill 不自动调用另一个 Skill。
+
+## 边界
+
+- 不向用户输出技术规格和镜头统计。
+- 不把画面中的对象直接当作视频主题。
+- 不判断创作意图、风格优劣、是否失误、传播效果或个人创意价值。
+- 不把“没有明确专业方向”表述成“你不需要专业分析”。
+- 不编造未读到的内容。
+- 不要求用户手填模型可以自行观察的字段。
+
+## 示例
+
+- examples/content_analysis.example.json
+- examples/video_overview.example.md
 
 ## Tests
 
-```bash
+~~~bash
 python -m unittest discover -s tests -v
-```
+~~~
 
-## Related skills
+## 作者其他作品
 
-This is the entry point of a small skill ecosystem:
+### 《东京，我的男主浓度严重超标》
 
-- **Professional Video Analysis** — planned; professional decomposition for comics, animation, teaching, and other rigid production structures.
-- **Long Video Index** — planned; transcript-first index, topic location, and retrieval for tens or hundreds of hours.
+仅发布于刺猬猫平台。喜欢恋爱喜剧的朋友可以支持一下；不喜欢也欢迎直接吐槽。
 
-See [NEXT_SKILLS.md](NEXT_SKILLS.md). The host agent owns routing; this package does not silently install or invoke another skill.
-
-## Watermark and provenance
-
-The visible attribution is **wmmn / 我密码呢**. It appears in the skill metadata, source headers, JSON artifacts, Markdown output, and contact-sheet image.
-
-Open-source code can always be forked or modified. The goal is not impossible DRM; the goal is that attribution removal is obvious and unofficial derivatives are easy to identify. Release hashes and Git history provide additional provenance.
-
-## Security and media policy
-
-- 不读取或写入 Cookie。
-- 不记录浏览器登录态。
-- 不把媒体文件、缓存或个人路径放入公开包。
-- 只分析宿主已经有权访问的媒体。
-- 本仓库不包含第三方视频素材。
+作者抖音：我密码呢
 
 ## License
 
 MIT License. See [LICENSE](LICENSE).
 
 Copyright (c) 2026 wmmn (where-password).
-
-## Author
-
-wmmn · 我密码呢
-

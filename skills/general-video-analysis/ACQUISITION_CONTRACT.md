@@ -2,6 +2,8 @@
 
 The general video analysis skill is URL-first from the user's perspective.
 
+**视频链接要求：** 请先打开你真正想分析的视频，再从该视频页面复制分享链接。抖音建议从历史记录、点赞或收藏进入目标视频后复制链接；不要把精选、主播主页、推荐流、搜索结果页或截图当作视频链接。
+
 ```text
 用户给 URL
 → host uses its existing viewer/video-access capability

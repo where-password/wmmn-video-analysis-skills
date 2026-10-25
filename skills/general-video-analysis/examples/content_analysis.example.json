@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "one_sentence": "这是一支用《八千里路明月照》重新填词、围绕 2026 LPL 四支队伍国际赛全败表现制作的粉丝恶搞 MV。",
+  "summary": "视频以改编歌词和赛事画面为主线，把队伍出征、比赛失利、选手特写和捧杯镜头并置，形成明显的反差调侃。整体重点是粉丝对成绩的吐槽、玩梗和二创，而不是正式应援或励志回顾。",
+  "content_type": [
+    "电竞恶搞 MV",
+    "赛事音乐混剪",
+    "粉丝二创"
+  ],
+  "themes": [
+    "LPL 2026 国际赛表现",
+    "粉丝整活",
+    "赛事二创"
+  ],
+  "content_mode": "meme",
+  "content_stance": "mocking",
+  "content_tone": [
+    "调侃",
+    "恶搞",
+    "赛事吐槽"
+  ],
+  "mocking_targets": [
+    "LPL 四支队伍的国际赛表现"
+  ],
+  "tone_basis": [
+    "改编歌词以吐槽成绩为主",
+    "失利画面与捧杯画面形成反差"
+  ],
+  "routing": {
+    "comic_aigc_led": false,
+    "longform_knowledge": false
+  },
+  "basis": [
+    "video",
+    "user_context"
+  ],
+  "ip_context": {
+    "works": [
+      "LPL",
+      "《八千里路明月照》"
+    ],
+    "characters": [],
+    "people": [],
+    "domains": [
+      "电子竞技",
+      "赛事音乐混剪",
+      "粉丝二创"
+    ],
+    "confidence": "high",
+    "evidence": [
+      "用户提供的标题与赛事背景",
+      "画面中的 LPL 赛事与选手"
+    ]
+  }
+}

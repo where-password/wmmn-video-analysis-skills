@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/content_analysis.schema.json",
+  "title": "Generic Video Content Analysis",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "one_sentence",
+    "summary",
+    "content_type",
+    "themes",
+    "content_mode",
+    "content_stance",
+    "content_tone",
+    "routing",
+    "basis"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "one_sentence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_type": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "basis": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "video",
+          "transcript",
+          "audio",
+          "user_context"
+        ]
+      }
+    },
+    "internal_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "content_mode": {
+      "enum": [
+        "original",
+        "remix",
+        "meme",
+        "adaptation",
+        "unknown"
+      ]
+    },
+    "routing": {
+      "type": "object",
+      "required": [
+        "comic_aigc_led",
+        "longform_knowledge"
+      ],
+      "properties": {
+        "comic_aigc_led": {
+          "type": "boolean"
+        },
+        "longform_knowledge": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "content_stance": {
+      "enum": [
+        "supportive",
+        "critical",
+        "mocking",
+        "neutral",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "content_tone": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mocking_targets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tone_basis": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ip_context": {
+      "type": "object",
+      "properties": {
+        "works": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "characters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
