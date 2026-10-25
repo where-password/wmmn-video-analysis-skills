@@ -25,7 +25,7 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.7 working version |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.8 working version |
 | [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.1 |
 | Long Video Index | Transcript-backed long-video index, timestamp lookup, and evidence trail | In development; not included in the current public release |
 

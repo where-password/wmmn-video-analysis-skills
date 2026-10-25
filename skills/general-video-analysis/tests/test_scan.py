@@ -70,7 +70,7 @@ class ScanUnitTests(unittest.TestCase):
             manifest = root / "media.json"
             manifest.write_text(json.dumps({"media_path": "video.mp4", "provider": "browser_devtools"}), encoding="utf-8")
             resolved, mode = load_media_manifest(manifest)
-            self.assertEqual(resolved, media)
+            self.assertEqual(resolved, media.resolve())
             self.assertEqual(mode, "host_media_manifest")
 
     def test_high_cut_rate_gets_complete_fast_cut_headline(self):
@@ -220,8 +220,8 @@ class OverviewTests(unittest.TestCase):
 
     def test_example_matches_rendered_contract(self):
         data = json.loads((ROOT / "examples" / "content_analysis.example.json").read_text(encoding="utf-8"))
-        expected = (ROOT / "examples" / "video_overview.example.md").read_text(encoding="utf-8")
-        self.assertEqual(render_overview(validate_content(data)), expected)
+        expected = (ROOT / "examples" / "video_overview.example.md").read_text(encoding="utf-8").replace("\r\n", "\n")
+        self.assertEqual(render_overview(validate_content(data)).replace("\r\n", "\n"), expected)
 
 
 if __name__ == "__main__":

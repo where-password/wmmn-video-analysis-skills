@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.8 - 2026-10-25
+
+- Fix Windows CI path comparison for resolved temporary media paths.
+- Normalize example line endings before exact rendered-output comparison.
+- Force UTF-8 in the GitHub Actions test matrix.
+
 ## 0.2.7 - 2026-10-25
 
 - Add a separate author-other-works section to the repository and Skill README, outside installation and usage instructions.
