@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.14 - 2026-10-26
+
+- Preserve the correct `豆包工作版` product name in compatibility copy and protect it from browser auto-translation.
+
 ## 0.2.13 - 2026-10-26
 
 - Wrap the Douyin nickname in inline code so browser auto-translation does not change it into a translated phrase.

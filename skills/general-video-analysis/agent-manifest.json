@@ -1,6 +1,6 @@
 {
   "name": "general-video-analysis",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "role": "Broad video content overview with optional soft routing",
   "entrypoint": {
     "command": "python",
@@ -125,7 +125,7 @@
     "public_comments",
     "github_issues"
   ],
-  "tested_hosts_note": "WorkBuddy, Doubao Work, and other agent hosts are not yet tested; report successful or failed runs on GitHub.",
+  "tested_hosts_note": "WorkBuddy, Doubao Work (`豆包工作版`), and other agent hosts are not yet tested; report successful or failed runs on GitHub.",
   "author_accounts": {
     "douyin": "我密码呢",
     "feedback": "DM or GitHub Issues"
