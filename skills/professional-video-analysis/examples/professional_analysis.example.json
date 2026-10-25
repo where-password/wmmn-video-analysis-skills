@@ -17,8 +17,8 @@
   "draft": {
     "stage": "first_pass",
     "label": "逆推草稿",
-    "handoff_ready": true,
-    "handoff_ready_reason": "语义观察和时间码证据帧均已提供",
+    "handoff_ready": false,
+    "handoff_ready_reason": "存在需要先复核的切分或运镜冲突",
     "note": "这是可供下一模型或工具继续深化的第一版拆解，不是最终成片方案。"
   },
   "batch": {
@@ -30,13 +30,17 @@
     "previous_shots_est": 0,
     "remaining_shots_est": 7,
     "semantic_ready_shots": 5,
-    "semantic_coverage": 1.0,
+    "semantic_coverage": 1,
     "review_required_count": 1,
     "awaiting_observation_count": 0,
     "detail_mode": "semantic",
-    "covered_start_sec": 0.0,
-    "covered_end_sec": 25.0,
-    "estimated": true
+    "covered_start_sec": 0,
+    "covered_end_sec": 25,
+    "estimated": true,
+    "semantic_complete": false,
+    "evidence_covered_shots": 5,
+    "evidence_coverage": 1,
+    "timecode_evidence_complete": true
   },
   "analysis_anchors": {
     "first_transition": {
@@ -54,7 +58,7 @@
       "confidence": 0.72
     },
     "minimal_first_unit": {
-      "start_sec": 0.0,
+      "start_sec": 0,
       "end_sec": 5,
       "label": "先看开场到首个转场的最小分析单元"
     }
@@ -77,9 +81,9 @@
   "shot_plan": [
     {
       "id": 1,
-      "start_sec": 0.0,
-      "end_sec": 5.0,
-      "duration_sec": 5.0,
+      "start_sec": 0,
+      "end_sec": 5,
+      "duration_sec": 5,
       "scene": "昏暗房间，桌面上有一台亮着的显示器",
       "characters": [
         "蓝发角色"
@@ -121,9 +125,9 @@
     },
     {
       "id": 2,
-      "start_sec": 5.0,
-      "end_sec": 10.0,
-      "duration_sec": 5.0,
+      "start_sec": 5,
+      "end_sec": 10,
+      "duration_sec": 5,
       "scene": "同一房间，桌面出现一块饼干",
       "characters": [
         "蓝发角色"
@@ -165,9 +169,9 @@
     },
     {
       "id": 3,
-      "start_sec": 10.0,
-      "end_sec": 15.0,
-      "duration_sec": 5.0,
+      "start_sec": 10,
+      "end_sec": 15,
+      "duration_sec": 5,
       "scene": "同一房间，饼干靠近嘴边",
       "characters": [
         "蓝发角色"
@@ -214,9 +218,9 @@
     },
     {
       "id": 4,
-      "start_sec": 15.0,
-      "end_sec": 20.0,
-      "duration_sec": 5.0,
+      "start_sec": 15,
+      "end_sec": 20,
+      "duration_sec": 5,
       "scene": "同一房间，角色表情变化",
       "characters": [
         "蓝发角色"
@@ -258,9 +262,9 @@
     },
     {
       "id": 5,
-      "start_sec": 20.0,
-      "end_sec": 25.0,
-      "duration_sec": 5.0,
+      "start_sec": 20,
+      "end_sec": 25,
+      "duration_sec": 5,
       "scene": "同一房间，角色突然紧张",
       "characters": [
         "蓝发角色"
@@ -305,10 +309,10 @@
     {
       "shot_range": "6-12",
       "shot_count": 7,
-      "start_sec": 25.0,
-      "end_sec": 60.0,
-      "estimated_duration_sec": 35.0,
-      "median_shot_sec": 5.0,
+      "start_sec": 25,
+      "end_sec": 60,
+      "estimated_duration_sec": 35,
+      "median_shot_sec": 5,
       "rhythm_hint": "大概偏稳，镜头较长",
       "status": "estimated_structure"
     }
@@ -493,7 +497,7 @@
         "confidence": 0.72
       },
       "minimal_first_unit": {
-        "start_sec": 0.0,
+        "start_sec": 0,
         "end_sec": 5,
         "label": "先看开场到首个转场的最小分析单元"
       }
@@ -539,7 +543,11 @@
     "observed_fields": [
       "camera_motion",
       "transitions"
-    ]
+    ],
+    "timecode_evidence_complete": true,
+    "timecode_evidence_coverage": 1,
+    "timecode_shots_covered": 5,
+    "timecode_shots_expected": 5
   },
   "limitations": [
     "This is a structural and production-planning analysis, not an authoritative creative critique.",

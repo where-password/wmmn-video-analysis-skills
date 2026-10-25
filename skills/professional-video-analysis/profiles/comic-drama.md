@@ -16,7 +16,7 @@ Required observations:
 Professional output:
 
 - structural feasibility
-- asset checklist
+- optional asset preparation checklist (not an analysis gate)
 - shot plan
 - first/last frame and motion prompt templates
 - continuity and QC checklist

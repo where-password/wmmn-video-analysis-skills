@@ -34,8 +34,8 @@ See [DISCLAIMER.md](DISCLAIMER.md) for the full disclaimer. This is not legal ad
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.10 working version |
-| [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.1 |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.11 working version |
+| [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.4 working version |
 | Long Video Index | Transcript-backed long-video index, timestamp lookup, and evidence trail | In development; not included in the current public release |
 
 The Skills are designed around separate jobs. The base Skill analyzes content. Professional analysis and long-video indexing are optional directions that users can choose independently.
@@ -118,13 +118,13 @@ These fields exist for machine use and routing context. They are not part of the
 
 ## Validation
 
-The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **62 tests**.
+The repository workflow runs the public Skill tests on Windows and Ubuntu with Python 3.10 and 3.12. Current release baseline: **67 tests**.
 
-- General Skill: 24 tests for content-first overview, structured IP/people recognition, stance/tone grounding, narrow routing, examples, and first-run guidance.
+- General Skill: 25 tests for content-first overview, structured IP/people recognition, stance/tone grounding, narrow routing, examples, and first-run guidance.
 - Professional Skill: schemas, progressive batching, evidence coverage, mechanics, and handoff gates.
 - Long-video index tests remain local while that product is still in development.
 
-No accuracy score is claimed. Real-world validation is still ongoing.
+No accuracy score is claimed yet. Human-labeled validation is community-driven; see the [benchmark protocol](skills/professional-video-analysis/benchmarks/README.md), [human labeling guide](skills/professional-video-analysis/benchmarks/human-labeling.md), and [community call](skills/professional-video-analysis/benchmarks/community-call.md).
 
 ## Repository layout
 

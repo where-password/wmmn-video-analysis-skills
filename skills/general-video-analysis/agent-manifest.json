@@ -1,6 +1,6 @@
 {
   "name": "general-video-analysis",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "role": "Broad video content overview with optional soft routing",
   "entrypoint": {
     "command": "python",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.11 - 2026-10-25
+
+- Keep the first-run notice to three short lines: source/usage responsibility, brief disclaimer, and accuracy feedback.
+- Clarify that analysis may be inaccurate and that feedback can be sent through the forum or Douyin.
+
 ## 0.2.10 - 2026-10-25
 
 - Add a three-point usage and copyright statement to the repository homepage and Skill README.

@@ -2,7 +2,7 @@
 
 A host-invoked professional planning layer for comics, animation, teaching, and other production-led video.
 
-It consumes the output of `general-video-analysis`, adds domain context, and produces:
+It consumes the output of `general-video-analysis`, optionally consumes its `content_analysis.json`, adds domain context, and produces:
 
 - a plain-language feasibility and reproduction report
 - a machine-readable shot plan
@@ -15,6 +15,18 @@ It consumes the output of `general-video-analysis`, adds domain context, and pro
 ## Use
 
 When the host can expose a readable media handle, measure camera motion and transitions first:
+
+For the AIGC/comic flow, pass the base content analysis:
+
+```bash
+python scripts/build_analysis.py \
+  --scan-json path/to/quick_scan.json \
+  --content-analysis-json path/to/content_analysis.json \
+  --context-json path/to/context.json \
+  --out path/to/output
+```
+
+If the base route says `comic_aigc_led=false`, ask the user before overriding it; then pass `--allow-content-mismatch`.
 
 ```bash
 python scripts/media_mechanics.py \
@@ -76,9 +88,11 @@ wmmn · 我密码呢
 
 ## User-facing output
 
-The report starts with a complete judgment, then shows feasibility, reproduction steps, per-shot plan, required assets, and limits.
+The report starts with a complete judgment, then shows feasibility, reproduction steps, per-shot plan, suggested asset preparation, and limits.
 
 See `examples/professional_report.example.md`.
+
+For community benchmark contributions, see [benchmarks/community-call.md](benchmarks/community-call.md) and the full [human-labeling protocol](benchmarks/human-labeling.md).
 
 ## AI-readable output
 
@@ -89,6 +103,12 @@ See `examples/professional_report.example.md`.
 - `production_plan`: ordered production steps and owner
 - `prompt_pack`: prompt skeletons or missing-input requirements
 - `evidence` and `limitations`: traceability and uncertainty
+
+## Continuation and evidence gates
+
+Before a detailed batch or another paid iteration, ask the user to choose the shot range or continuation option explicitly. Do not treat a compressed context, silence, or earlier media-access permission as confirmation. The model should draft observable shot context from the media; the user should not be asked to hand-write technical fields.
+
+A batch is handoff-ready only when every shot has complete semantic observations, no unresolved segmentation/camera conflict, and the evidence manifest covers every shot. Missing asset references are a preparation suggestion, not a gate. A partial evidence packet is reported as partial and cannot be presented as a complete handoff.
 
 ## Progressive output
 

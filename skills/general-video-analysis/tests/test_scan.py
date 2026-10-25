@@ -90,6 +90,8 @@ class ScanUnitTests(unittest.TestCase):
         self.assertIn("版权", notice)
         self.assertIn("公司或商业", notice)
         self.assertIn("抖音私信", notice)
+        self.assertIn("论坛", notice)
+        self.assertIn("不保证完全准确", notice)
         self.assertIn("我密码呢", notice)
 
     def test_first_run_notice_is_appended_once_per_installation(self):

@@ -1,7 +1,7 @@
 {
   "name": "professional-video-analysis",
-  "version": "0.4.1",
-  "role": "Professional reverse-engineering draft, media mechanics measurement, and downstream handoff layer",
+  "version": "0.4.4",
+  "role": "Comic/AIGC-oriented professional reverse-engineering draft with base content-context integration",
   "requires": [
     "general-video-analysis"
   ],
@@ -19,7 +19,9 @@
     "context_json",
     "mechanics_json",
     "evidence_json",
-    "media_manifest"
+    "media_manifest",
+    "content_analysis_json",
+    "allow_content_mismatch"
   ],
   "profiles": [
     "comic_drama",
@@ -51,7 +53,8 @@
       "time_range",
       "shot_range",
       "stop"
-    ]
+    ],
+    "requires_explicit_user_selection": true
   },
   "capabilities": [
     "shot-specific prompts",
@@ -63,7 +66,13 @@
     "no negative-prompt generation",
     "context schema validation",
     "time-coded start/middle/end evidence frames",
-    "human-labeled benchmark harness"
+    "human-labeled benchmark harness",
+    "per-batch evidence coverage gate",
+    "base content-analysis integration",
+    "comic_aigc_led route gate",
+    "asset recommendations without blocking",
+    "one-page production decision card",
+    "community benchmark contribution call"
   ],
   "tools": {
     "media_mechanics": "scripts/media_mechanics.py",
@@ -77,5 +86,17 @@
     "evidence_manifest": "schemas/evidence_manifest.schema.json",
     "benchmark_cases": "schemas/benchmark_cases.schema.json"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "integration": {
+    "requires": "general-video-analysis",
+    "content_analysis": "content_analysis.json",
+    "route_gate": "comic_aigc_led",
+    "mismatch_override": "explicit_user_confirmation",
+    "asset_policy": "suggest_not_block"
+  },
+  "benchmarks": {
+    "harness": "benchmarks/README.md",
+    "community_call": "benchmarks/community-call.md",
+    "human_labeling": "benchmarks/human-labeling.md"
+  }
 }

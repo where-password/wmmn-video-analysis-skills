@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.4.4 - 2026-10-25
+
+- Add a detailed community human-labeling protocol.
+- Add a ready-to-post community contribution call for AIGC/comic samples.
+- Add a one-page production decision card at the top of professional reports.
+
+## 0.4.3 - 2026-10-25
+
+- Accept optional `content_analysis.json` from the base Skill and show confirmed content/IP context in reports and handoffs.
+- Gate comic-drama professional analysis on `routing.comic_aigc_led`, with explicit mismatch override.
+- Treat missing asset references as preparation advice rather than a blocking feasibility gate.
+- Clarify that the model drafts observable context; users are not asked to hand-write shot fields.
+- Add a one-page production decision card to the top of the professional report.
+- Add a ready-to-post community benchmark call for crowdsourced human labels.
+
+## 0.4.2 - 2026-10-25
+
+- Require complete semantic observations, no unresolved shot conflicts, and time-coded evidence coverage for every shot before marking a handoff ready.
+- Report partial evidence coverage explicitly instead of treating any evidence manifest as complete.
+- Prevent local absolute evidence-manifest paths from being written into reports and JSON.
+- Require explicit user selection before continuing to another batch; compressed context or earlier authorization is not confirmation.
+
+# Changelog
+
 ## 0.4.1 - 2026-10-24
 
 - Add the MIT License to the standalone skill package.

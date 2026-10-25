@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from build_analysis import build_payload, render_handoff, render_markdown, validate_context
+from build_analysis import build_payload, normalize_content_context, render_handoff, render_markdown, validate_content_route, validate_context
 
 
 class ProfessionalAnalysisTests(unittest.TestCase):
@@ -18,11 +18,62 @@ class ProfessionalAnalysisTests(unittest.TestCase):
             "shot_rows": [{"id": i + 1, "start": i * 5, "end": (i + 1) * 5, "duration": 5} for i in range(shots)],
         }
 
-    def test_comic_without_assets_is_partial(self):
+    def content_analysis(self, comic_aigc_led=True):
+        return {
+            "one_sentence": "这是一条关于亲情与选择的短篇漫剧。",
+            "content_type": ["短篇情感漫剧", "动画剧情"],
+            "themes": ["亲情", "选择"],
+            "content_tone": ["叙事", "温情"],
+            "content_mode": "original",
+            "routing": {"comic_aigc_led": comic_aigc_led, "longform_knowledge": False},
+            "ip_context": {
+                "works": ["测试作品"],
+                "characters": ["测试角色"],
+                "people": [],
+                "domains": ["动画", "漫剧"],
+                "confidence": "medium",
+            },
+        }
+
+    def test_comic_without_assets_is_not_blocked(self):
         payload = build_payload(self.scan(), {"domain": "comic_drama"})
-        self.assertEqual(payload["verdict"]["status"], "partially_feasible")
+        self.assertEqual(payload["verdict"]["status"], "structurally_feasible")
+        self.assertIn("角色参考", payload["verdict"]["asset_recommendation"])
         self.assertEqual(payload["domain"], "comic_drama")
-        self.assertIn("wmmn", render_markdown(payload))
+        self.assertIn("资产情况不作为分析门槛", render_markdown(payload))
+
+    def test_content_analysis_enriches_report_and_handoff(self):
+        content_context = normalize_content_context(self.content_analysis())
+        payload = build_payload(self.scan(), {"domain": "comic_drama"}, content_context=content_context)
+        report = render_markdown(payload)
+        handoff = render_handoff(payload)
+        self.assertIn("## 内容上下文", report)
+        self.assertIn("作品/IP：测试作品", report)
+        self.assertIn("角色：测试角色", report)
+        self.assertIn("## 内容上下文", handoff)
+        self.assertEqual(payload["evidence"]["content_analysis"], "provided")
+
+    def test_content_route_mismatch_requires_explicit_override(self):
+        content_context = normalize_content_context(self.content_analysis(comic_aigc_led=False))
+        with self.assertRaisesRegex(ValueError, "comic_aigc_led"):
+            validate_content_route(content_context, {"domain": "comic_drama"})
+        validate_content_route(content_context, {"domain": "comic_drama"}, allow_mismatch=True)
+
+    def test_decision_card_is_actionable_and_at_report_top(self):
+        context = {
+            "domain": "comic_drama",
+            "shots": [{
+                "id": shot_id, "scene": "房间", "characters": ["角色"], "action": "走动", "shot_size": "中景",
+                "camera": "固定", "transition": "开场", "first_frame": "左", "last_frame": "右",
+            } for shot_id in range(1, 6)],
+        }
+        payload = build_payload(self.scan(shots=6), context)
+        report = render_markdown(payload)
+        self.assertIn("## 制作决策卡", report)
+        self.assertIn("建议下一步", report)
+        self.assertEqual(payload["decision_card"]["status"], "ready")
+        self.assertIn(1, payload["decision_card"]["priority_shots"])
+        self.assertLess(report.index("## 制作决策卡"), report.index("## 内容上下文") if "## 内容上下文" in report else len(report))
 
     def test_teaching_has_lesson_plan(self):
         payload = build_payload(self.scan(), {"domain": "teaching"})
@@ -229,6 +280,28 @@ class ProfessionalAnalysisTests(unittest.TestCase):
             "domain": "comic_drama",
             "available_assets": ["角色锚点"],
             "shots": [{
+                "id": shot_id, "scene": "房间", "characters": ["角色"], "action": "走动", "shot_size": "中景",
+                "camera": "固定", "transition": "开场", "first_frame": "左", "last_frame": "右",
+            } for shot_id in range(1, 6)],
+        }
+        evidence = {
+            "status": "completed",
+            "contact_sheet": {"path": "evidence_contact_sheet.jpg"},
+            "shots": [{"id": shot_id, "frames": [{}, {}, {}]} for shot_id in range(1, 6)],
+        }
+        payload = build_payload(self.scan(shots=6), context, evidence=evidence, evidence_manifest_path=Path("evidence/evidence_manifest.json"))
+        self.assertTrue(payload["draft"]["handoff_ready"])
+        self.assertTrue(payload["batch"]["semantic_complete"])
+        self.assertEqual(payload["batch"]["evidence_covered_shots"], 5)
+        self.assertEqual(payload["evidence"]["timecode_frame_count"], 15)
+        self.assertIn("已生成 15 张首/中/尾证据帧", render_markdown(payload))
+        self.assertIn("时间码证据：provided", render_handoff(payload))
+
+    def test_partial_timecode_evidence_is_not_handoff_ready(self):
+        context = {
+            "domain": "comic_drama",
+            "available_assets": ["角色锚点"],
+            "shots": [{
                 "id": 1, "scene": "房间", "characters": ["角色"], "action": "走动", "shot_size": "中景",
                 "camera": "固定", "transition": "开场", "first_frame": "左", "last_frame": "右",
             }],
@@ -238,11 +311,15 @@ class ProfessionalAnalysisTests(unittest.TestCase):
             "contact_sheet": {"path": "evidence_contact_sheet.jpg"},
             "shots": [{"id": 1, "frames": [{}, {}, {}]}],
         }
-        payload = build_payload(self.scan(shots=6), context, evidence=evidence, evidence_manifest_path=Path("evidence/evidence_manifest.json"))
-        self.assertTrue(payload["draft"]["handoff_ready"])
-        self.assertEqual(payload["evidence"]["timecode_frame_count"], 3)
-        self.assertIn("已生成 3 张首/中/尾证据帧", render_markdown(payload))
-        self.assertIn("时间码证据：provided", render_handoff(payload))
+        payload = build_payload(self.scan(shots=6), context, evidence=evidence)
+        self.assertFalse(payload["draft"]["handoff_ready"])
+        self.assertEqual(payload["evidence"]["timecode_frames"], "partial")
+        self.assertIn("只覆盖 1/5", render_markdown(payload))
+        self.assertIn("不能作为完整交接包", render_markdown(payload))
+
+    def test_next_action_never_implies_automatic_continuation(self):
+        payload = build_payload(self.scan(shots=12), {"domain": "comic_drama", "available_assets": ["角色锚点"]})
+        self.assertIn("不要根据上下文压缩", payload["next_action"])
 
     def test_context_schema_and_duplicate_ids(self):
         validate_context({"domain": "comic_drama", "shots": [{"id": 1, "scene": "房间"}]})

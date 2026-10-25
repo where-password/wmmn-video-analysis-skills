@@ -51,7 +51,7 @@ Technical structure is for internal routing and downstream analysis only.
 
 If the host cannot persist the marker, the overview still succeeds but reports `first_run_state_persisted: false`; the notice may appear again on the next run. Do not duplicate the notice manually when the generator already appended it.
 
-The notice covers two points only: video source/copyright responsibility, and Douyin DM feedback. Do not add the novel or other promotion to generated outputs.
+The notice is limited to three short points: video source/usage responsibility, a brief disclaimer, and accuracy feedback via the community forum or Douyin. Do not add the novel or other promotion to generated outputs.
 
 ## Workflow
 

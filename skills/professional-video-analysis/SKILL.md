@@ -1,6 +1,6 @@
 ---
 name: professional-video-analysis
-description: Turn a general video scan plus host-provided domain context into a professional feasibility and reproduction plan for comic drama, animation, teaching, and other production-led videos. Use after the general-video-analysis skill identifies a professional candidate. This skill produces structural plans and prompt-ready evidence, not generic film criticism.
+description: Turn a general video scan and content classification into a professional feasibility and reproduction plan for comic drama, animation, and AIGC-oriented videos, with teaching as a secondary profile. Use only after the base Skill or the user explicitly identifies a production-analysis need. This Skill produces structural plans and prompt-ready evidence, not generic film criticism.
 metadata:
   author: "我密码呢 (wmmn)"
   watermark: "wmmn / 我密码呢"
@@ -17,7 +17,9 @@ metadata:
 ```text
 general-video-analysis
   → quick_scan.json (shots, cuts, duration, applicability)
-  → host supplies a local media handle and domain observations
+  → content_analysis.json (content type, tone, IP context, comic_aigc_led)
+  → user explicitly chooses professional analysis
+  → host supplies a local media handle and per-shot observations
   → optional media_mechanics.py (camera motion + transition signatures)
   → professional-video-analysis
   → professional_report.md + professional_handoff.md + professional_analysis.json
@@ -30,6 +32,8 @@ The host owns media access and semantic observations. This skill owns the profes
 Before a detailed batch, the host must look at the selected shots through whatever media capability it actually has: the host video viewer, a contact sheet, or frames extracted by another tool. This skill does not download media, open a browser, read cookies, or perform OCR/VLM.
 
 When the host can provide a readable local media handle, run `scripts/media_mechanics.py` to measure visual camera motion and incoming transition signatures. These are measurements with confidence, not physical rig metadata. Without a media handle, preserve host observations and leave missing camera/transition fields unverified.
+
+Ask for explicit user selection before each paid or long-running continuation. A compressed context, silence, or permission to access the media is not confirmation to run the next batch. If the user has not chosen a shot range or continuation option, stop at the current batch.
 
 Write only what was observed into `context.json`:
 
@@ -45,13 +49,20 @@ Write only what was observed into `context.json`:
 
 If the host cannot observe the selected shots, stop at the structure-only preview and say which observations are missing. Never fill five rows with “待补充” and present that as an analysis.
 
+The model should generate the observation draft from the media evidence. Do not ask the end user to hand-write scene, character, action, or shot-size fields.
+
 ## Inputs
 
 Required:
 
 - `--scan-json`: output from general-video-analysis
 - `--out`: output directory
-- `--context-json`: domain, target format, assets, tools, workflow constraints, and per-shot observations; validated against `schemas/context.schema.json`
+- `--context-json`: domain, target format, tools, workflow constraints, and per-shot observations; validated against `schemas/context.schema.json`
+
+Strongly recommended for the AIGC/comic flow:
+
+- `--content-analysis-json`: the base Skill’s `content_analysis.json`; this supplies content context, confirmed IP/characters, and the `comic_aigc_led` gate
+- `--allow-content-mismatch`: only after the user explicitly confirms they still want professional analysis when the base route says `comic_aigc_led=false`
 
 Strongly recommended when a host media handle exists:
 
@@ -91,6 +102,7 @@ Build the report:
 ```bash
 python scripts/build_analysis.py \
   --scan-json path/to/quick_scan.json \
+  --content-analysis-json path/to/content_analysis.json \
   --context-json path/to/context.json \
   --mechanics-json path/to/mechanics.json \
   --evidence-json path/to/evidence-output/evidence_manifest.json \
@@ -104,7 +116,7 @@ python scripts/build_analysis.py \
 - `professional_analysis.json`: AI-readable plan, anchors, confidence and evidence
 - evidence output: `evidence_manifest.json`, start/middle/end frames, and `evidence_contact_sheet.jpg`
 
-Context and evidence manifests must pass their JSON Schemas. The report marks handoff ready only when both semantic observations and time-coded evidence frames exist.
+Context and evidence manifests must pass their JSON Schemas. The report marks handoff ready only when every shot in the detailed batch has complete semantic observations, no unresolved segmentation/camera conflict, and time-coded evidence coverage.
 
 The host must show the Markdown report directly to the user. Do not merely list files.
 
@@ -191,6 +203,14 @@ The report is explicitly a first-pass reverse-engineering draft, not a final pro
 - three downstream routes: own AI workflow, new chat/another model, or traditional editing.
 
 A new chat or another model must also receive the relevant reference frames or video. Do not imply that the text alone proves unobserved visual facts.
+
+## Content routing gate
+
+When `--content-analysis-json` is supplied and the context domain is `comic_drama`, `routing.comic_aigc_led` must be true. If it is false, stop and ask the user whether they want to override the base classification. Only after explicit confirmation may the host pass `--allow-content-mismatch`.
+
+Use base `ip_context` only for confirmed works, characters, and people. Do not turn an unknown IP into a guess. Use the content type, themes, and tone to frame the professional report; do not treat them as measured shot facts.
+
+Assets are preparation advice, not an analysis gate. A missing character, scene, or prop reference does not block structural shot analysis. It only adds a preparation suggestion.
 
 ## Feasibility gate
 

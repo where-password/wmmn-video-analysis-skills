@@ -55,6 +55,54 @@ def validate_evidence_manifest(evidence: dict[str, Any]) -> None:
         raise ValueError(f"证据帧清单不符合 Schema，位置 {path}：{exc.message}") from exc
 
 
+def normalize_content_context(data: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not data:
+        return None
+    routing = data.get("routing")
+    if not isinstance(routing, dict):
+        raise ValueError("content_analysis.json 缺少 routing")
+    comic_aigc_led = routing.get("comic_aigc_led")
+    longform_knowledge = routing.get("longform_knowledge")
+    if not isinstance(comic_aigc_led, bool) or not isinstance(longform_knowledge, bool):
+        raise ValueError("content_analysis.json 的 routing 字段需要是布尔值")
+    ip_context = data.get("ip_context")
+    if not isinstance(ip_context, dict):
+        ip_context = {}
+    def strings(value: Any) -> list[str]:
+        if isinstance(value, str):
+            return [value.strip()] if value.strip() else []
+        if isinstance(value, list):
+            return [str(item).strip() for item in value if str(item).strip()]
+        return []
+    return {
+        "one_sentence": str(data.get("one_sentence") or "").strip(),
+        "content_type": strings(data.get("content_type")),
+        "themes": strings(data.get("themes")),
+        "content_tone": strings(data.get("content_tone")),
+        "content_mode": str(data.get("content_mode") or "unknown"),
+        "comic_aigc_led": comic_aigc_led,
+        "longform_knowledge": longform_knowledge,
+        "ip_context": {
+            "works": strings(ip_context.get("works")),
+            "characters": strings(ip_context.get("characters")),
+            "people": strings(ip_context.get("people")),
+            "domains": strings(ip_context.get("domains")),
+            "confidence": str(ip_context.get("confidence") or "unknown"),
+        },
+    }
+
+
+def validate_content_route(content_context: dict[str, Any] | None, context: dict[str, Any], allow_mismatch: bool = False) -> None:
+    if not content_context:
+        return
+    domain = str(context.get("domain") or "unknown")
+    if domain == "comic_drama" and not content_context.get("comic_aigc_led") and not allow_mismatch:
+        raise ValueError(
+            "基础层内容分析没有把这条视频标记为 comic_aigc_led=true。"
+            "请让用户确认是否仍要按漫剧专业模式分析；确认后可显式传入 --allow-content-mismatch。"
+        )
+
+
 def build_verdict(scan: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
     domain = str(context.get("domain") or "unknown")
     applicability = scan.get("applicability") or {}
@@ -62,6 +110,9 @@ def build_verdict(scan: dict[str, Any], context: dict[str, Any]) -> dict[str, An
     shots = int(structure.get("shots") or 0)
     status = applicability.get("status")
     assets = list(context.get("available_assets") or [])
+    asset_recommendation = []
+    if domain == "comic_drama" and not assets:
+        asset_recommendation = ["角色参考", "场景参考", "道具参考"]
     can_reuse = [
         "镜头数量与切点节奏",
         "每个镜头的时长与先后顺序",
@@ -80,14 +131,6 @@ def build_verdict(scan: dict[str, Any], context: dict[str, Any]) -> dict[str, An
             "can_reuse": can_reuse,
             "cannot_guarantee": cannot_guarantee,
         }
-    if domain == "comic_drama" and not assets:
-        return {
-            "status": "partially_feasible",
-            "headline": "镜头结构大概能拆，但缺少角色、场景等资产，暂时不能判断角色一致性能不能复刻。",
-            "scope": "structure_with_asset_gate",
-            "can_reuse": can_reuse + ["分镜节奏与首尾帧设计"],
-            "cannot_guarantee": cannot_guarantee,
-        }
     if domain == "teaching":
         return {
             "status": "partially_feasible",
@@ -98,10 +141,11 @@ def build_verdict(scan: dict[str, Any], context: dict[str, Any]) -> dict[str, An
         }
     return {
         "status": "structurally_feasible",
-        "headline": "从镜头结构看大概可以拆解和复刻，但能不能做出一致内容，取决于宿主提供的资产和领域约束。",
+        "headline": "从镜头结构看可以进入拆解；如果计划复刻，建议准备角色、场景和道具参考，资产情况不作为分析门槛。",
         "scope": "structure_and_production_plan",
-        "can_reuse": can_reuse,
+        "can_reuse": can_reuse + (["分镜节奏与首尾帧设计"] if domain == "comic_drama" else []),
         "cannot_guarantee": cannot_guarantee,
+        "asset_recommendation": asset_recommendation,
     }
 
 
@@ -473,7 +517,7 @@ def build_analysis_anchors(all_shots: list[dict[str, Any]], mechanics: dict[str,
     }
 
 
-def build_handoff(selected: list[dict[str, Any]], anchors: dict[str, Any]) -> dict[str, Any]:
+def build_handoff(selected: list[dict[str, Any]], anchors: dict[str, Any], content_context: dict[str, Any] | None = None) -> dict[str, Any]:
     field_labels = {
         "scene": "画面场景",
         "characters": "人物",
@@ -501,6 +545,7 @@ def build_handoff(selected: list[dict[str, Any]], anchors: dict[str, Any]) -> di
     return {
         "draft_status": "first_pass_reverse_engineering",
         "purpose": "供用户自己的 AI 工作流、新对话/其他模型或传统剪辑继续深化。",
+        "content_context": content_context,
         "analysis_anchors": anchors,
         "open_questions": open_questions,
         "review_required_shots": review_required_shots,
@@ -524,6 +569,95 @@ def build_handoff(selected: list[dict[str, Any]], anchors: dict[str, Any]) -> di
     }
 
 
+def build_decision_card(
+    verdict: dict[str, Any],
+    batch: dict[str, Any],
+    anchors: dict[str, Any],
+    selected: list[dict[str, Any]],
+    remaining: list[dict[str, Any]],
+    review_required_count: int,
+    awaiting_observation_count: int,
+    semantic_complete: bool,
+    evidence_status: str,
+    next_action: str,
+    content_context: dict[str, Any] | None,
+) -> dict[str, Any]:
+    if batch.get("detail_mode") == "structure_only":
+        action_status = "needs_observation"
+    elif review_required_count:
+        action_status = "review_first"
+    elif awaiting_observation_count:
+        action_status = "needs_observation"
+    else:
+        action_status = "ready"
+
+    priority_shots = [
+        shot["id"]
+        for shot in selected
+        if shot.get("status") == "observed"
+        and (shot.get("feasibility") or {}).get("prompt_status") == "draft_ready"
+    ][:3]
+    if not priority_shots:
+        priority_shots = [shot["id"] for shot in selected[:3]]
+
+    review_ids = [
+        shot["id"]
+        for shot in selected
+        if (shot.get("feasibility") or {}).get("status") == "review_required"
+    ]
+    risks = []
+    if review_ids:
+        risks.append(f"镜头 {', '.join(str(shot_id) for shot_id in review_ids)} 需要先复核切分或运镜冲突")
+    if awaiting_observation_count:
+        risks.append(f"{awaiting_observation_count} 个镜头缺少提示词所需观察")
+    if not risks:
+        risks.append("当前批次未发现必须暂停的结构性风险")
+
+    minimal_unit = anchors.get("minimal_first_unit")
+    if minimal_unit:
+        minimum_reproducible_unit = {
+            "start_sec": minimal_unit.get("start_sec"),
+            "end_sec": minimal_unit.get("end_sec"),
+            "label": minimal_unit.get("label"),
+        }
+    elif selected:
+        minimum_reproducible_unit = {
+            "start_sec": selected[0]["start_sec"],
+            "end_sec": selected[-1]["end_sec"],
+            "label": "当前批次的首个可拆单元",
+        }
+    else:
+        minimum_reproducible_unit = None
+
+    return {
+        "status": action_status,
+        "headline": verdict.get("headline"),
+        "content_summary": (content_context or {}).get("one_sentence") if content_context else None,
+        "scope": {
+            "batch_start": batch.get("batch_start"),
+            "batch_end": batch.get("batch_end"),
+            "covered_start_sec": batch.get("covered_start_sec"),
+            "covered_end_sec": batch.get("covered_end_sec"),
+            "remaining_shots": len(remaining),
+        },
+        "minimum_reproducible_unit": minimum_reproducible_unit,
+        "priority_shots": priority_shots,
+        "risks": risks,
+        "evidence": {
+            "semantic_complete": semantic_complete,
+            "timecode_frames": evidence_status,
+        },
+        "asset_preparation": verdict.get("asset_recommendation") or [],
+        "next_action": next_action,
+    }
+
+
+def artifact_display_path(path: Path | None) -> str | None:
+    if path is None:
+        return None
+    return path.name if path.is_absolute() else path.as_posix()
+
+
 def build_payload(
     scan: dict[str, Any],
     context: dict[str, Any],
@@ -532,6 +666,7 @@ def build_payload(
     mechanics: dict[str, Any] | None = None,
     evidence: dict[str, Any] | None = None,
     evidence_manifest_path: Path | None = None,
+    content_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     domain = str(context.get("domain") or "unknown")
     all_shots = build_shot_plan(scan, context, mechanics)
@@ -542,12 +677,30 @@ def build_payload(
     selected = all_shots[start_index:start_index + max(1, detail_count)]
     remaining = all_shots[start_index + len(selected):]
     previous_count = len(all_shots[:start_index]) if selected else len(all_shots)
+    selected_ids = {int(shot["id"]) for shot in selected}
+    evidence_shot_ids = {
+        int(item["id"])
+        for item in (evidence or {}).get("shots", [])
+        if str(item.get("id", "")).isdigit()
+    }
+    evidence_covered_ids = selected_ids & evidence_shot_ids
+    evidence_complete = bool(evidence) and bool(selected_ids) and evidence_covered_ids == selected_ids
+    evidence_status = "provided" if evidence_complete else "partial" if evidence else "absent"
     verdict = build_verdict(scan, context)
     semantic_ready_count = sum(1 for shot in selected if shot["status"] != "unverified")
     review_required_count = sum(1 for shot in selected if shot.get("feasibility", {}).get("status") == "review_required")
     awaiting_observation_count = sum(
         1 for shot in selected
         if shot.get("feasibility", {}).get("prompt_status") == "needs_observation"
+    )
+    semantic_complete = bool(selected) and all(
+        shot.get("status") == "observed" and shot.get("feasibility", {}).get("prompt_status") == "draft_ready"
+        for shot in selected
+    )
+    evidence_frame_count = sum(
+        len(item.get("frames") or [])
+        for item in (evidence or {}).get("shots", [])
+        if str(item.get("id", "")).isdigit() and int(item["id"]) in selected_ids
     )
     if review_required_count:
         verdict["headline"] = (
@@ -566,6 +719,10 @@ def build_payload(
         "semantic_coverage": round(semantic_ready_count / len(selected), 3) if selected else 0,
         "review_required_count": review_required_count,
         "awaiting_observation_count": awaiting_observation_count,
+        "evidence_covered_shots": len(evidence_covered_ids),
+        "evidence_coverage": round(len(evidence_covered_ids) / len(selected), 3) if selected else 0,
+        "timecode_evidence_complete": evidence_complete,
+        "semantic_complete": semantic_complete,
         "detail_mode": "semantic" if semantic_ready_count else "structure_only",
         "covered_start_sec": selected[0]["start_sec"] if selected else None,
         "covered_end_sec": selected[-1]["end_sec"] if selected else None,
@@ -592,6 +749,24 @@ def build_payload(
             {"id": "C", "label": "改拆指定镜头范围", "action": "shot_range"},
             {"id": "D", "label": "先停止，只保留当前结构概览", "action": "stop"},
         ]
+    next_action = (
+        (
+            "请先让宿主观察本批镜头并补充 context.json，再生成逐镜提示词。"
+            if batch["detail_mode"] == "structure_only"
+            else "本批有镜头需要先复核切分和运镜冲突，再决定是否继续。"
+            if review_required_count
+            else f"本批有 {awaiting_observation_count} 个镜头缺少提示词所需观察；补齐后再生成。"
+            if awaiting_observation_count
+            else "请让用户明确选择 A/B/C/D，再决定是否继续拆解。" if remaining else "本批已经到视频结尾。"
+        )
+        + (" 不要根据上下文压缩、沉默或前一轮授权自动续拆。" if remaining else "")
+    )
+    decision_card = build_decision_card(
+        verdict, batch, anchors, selected, remaining,
+        review_required_count, awaiting_observation_count,
+        semantic_complete, evidence_status, next_action, content_context,
+    )
+
     return {
         "schema_version": "1.0",
         "status": "completed",
@@ -604,19 +779,22 @@ def build_payload(
             "width": (scan.get("media") or {}).get("width"),
             "height": (scan.get("media") or {}).get("height"),
             "fps": (scan.get("media") or {}).get("fps"),
+            "content_context": content_context,
         },
         "draft": {
             "stage": "first_pass",
             "label": "逆推草稿",
-            "handoff_ready": batch["detail_mode"] == "semantic" and bool(evidence),
+            "handoff_ready": semantic_complete and evidence_complete and review_required_count == 0,
             "handoff_ready_reason": (
-                "语义观察和时间码证据帧均已提供"
-                if batch["detail_mode"] == "semantic" and evidence
-                else "缺少语义观察和时间码证据帧"
-                if batch["detail_mode"] != "semantic" and not evidence
-                else "缺少语义观察"
-                if batch["detail_mode"] != "semantic"
-                else "缺少时间码证据帧"
+                "本批语义观察、复核状态和时间码证据帧均完整"
+                if semantic_complete and evidence_complete and review_required_count == 0
+                else "存在需要先复核的切分或运镜冲突"
+                if review_required_count
+                else "缺少本批全部镜头的语义观察"
+                if not semantic_complete
+                else "缺少覆盖本批全部镜头的时间码证据帧"
+                if not evidence_complete
+                else "交接条件未满足"
             ),
             "note": "这是可供下一模型或工具继续深化的第一版拆解，不是最终成片方案。",
         },
@@ -630,16 +808,21 @@ def build_payload(
         "prompt_usage_notice": prompt_pack["notice"],
         "negative_prompt_policy": NEGATIVE_PROMPT_POLICY,
         "next_options": next_options,
-        "handoff": build_handoff(selected, anchors),
+        "handoff": build_handoff(selected, anchors, content_context),
         "evidence": {
             "general_scan": "quick_scan.json",
             "context": "host-provided" if context else "absent",
             "mechanics": "measured" if mechanics and mechanics.get("status") == "completed" else "absent",
-            "timecode_frames": "provided" if evidence else "absent",
-            "timecode_frame_count": sum(len(shot.get("frames") or []) for shot in (evidence or {}).get("shots", [])),
+            "timecode_frames": evidence_status,
+            "timecode_evidence_complete": evidence_complete,
+            "timecode_evidence_coverage": round(len(evidence_covered_ids) / len(selected), 3) if selected else 0,
+            "timecode_shots_covered": len(evidence_covered_ids),
+            "timecode_shots_expected": len(selected),
+            "timecode_frame_count": evidence_frame_count,
             "evidence_contact_sheet": (evidence or {}).get("contact_sheet", {}).get("path"),
-            "evidence_manifest": str(evidence_manifest_path) if evidence_manifest_path else None,
+            "evidence_manifest": artifact_display_path(evidence_manifest_path),
             "observed_fields": sorted((context.get("observations") or {}).keys()),
+            "content_analysis": "provided" if content_context else "absent",
         },
         "limitations": [
             "This is a structural and production-planning analysis, not an authoritative creative critique.",
@@ -647,15 +830,8 @@ def build_payload(
             "Semantic observations, OCR, and identity consistency must come from the host or another validated analyzer.",
             "A plan does not guarantee asset consistency, humor, net sense, or audience response.",
         ],
-        "next_action": (
-            "请先让宿主观察本批镜头并补充 context.json，再生成逐镜提示词。"
-            if batch["detail_mode"] == "structure_only"
-            else "本批有镜头需要先复核切分和运镜冲突，再决定是否继续。"
-            if review_required_count
-            else f"本批有 {awaiting_observation_count} 个镜头缺少提示词所需观察；补齐后再生成。"
-            if awaiting_observation_count
-            else "请选择 A/B/C/D，再决定是否继续拆解。" if remaining else "本批已经到视频结尾。"
-        ),
+        "next_action": next_action,
+        "decision_card": decision_card,
     }
 
 
@@ -698,8 +874,54 @@ def render_markdown(payload: dict[str, Any]) -> str:
         "> 这是第一版逆推草稿，不是最终成片方案。观察到的事实、测量值和待确认项是分开的，可交给下一模型、自己的工作流或传统剪辑继续深化。",
         "",
     ]
+    decision_card = payload.get("decision_card") or {}
+    if decision_card:
+        card_status_labels = {
+            "ready": "可以继续",
+            "review_first": "先复核再继续",
+            "needs_observation": "先补充画面观察",
+        }
+        scope = decision_card.get("scope") or {}
+        minimum_unit = decision_card.get("minimum_reproducible_unit") or {}
+        lines.extend(["## 制作决策卡", ""])
+        lines.append(f"- 当前判断：{decision_card.get('headline') or verdict.get('headline')}")
+        lines.append(f"- 当前状态：{card_status_labels.get(decision_card.get('status'), decision_card.get('status'))}")
+        if scope:
+            lines.append(
+                f"- 本批范围：镜头 {scope.get('batch_start')}–{scope.get('batch_end')}，"
+                f"约 {scope.get('covered_start_sec')}–{scope.get('covered_end_sec')} 秒"
+            )
+        if minimum_unit:
+            lines.append(
+                f"- 最小可复刻单元：约 {minimum_unit.get('start_sec')}–{minimum_unit.get('end_sec')} 秒"
+            )
+        if decision_card.get("priority_shots"):
+            lines.append(f"- 建议优先看：镜头 {', '.join(str(item) for item in decision_card['priority_shots'])}")
+        for risk in decision_card.get("risks") or []:
+            lines.append(f"- 当前风险：{risk}")
+        if decision_card.get("asset_preparation"):
+            lines.append(f"- 复刻准备：{'、'.join(decision_card['asset_preparation'])}")
+        lines.append(f"- 建议下一步：{decision_card.get('next_action')}")
+        lines.append("")
     if source.get("goal"):
         lines.extend([f"目标：{source['goal']}", ""])
+    content_context = source.get("content_context") or {}
+    if content_context:
+        lines.extend(["## 内容上下文", ""])
+        if content_context.get("one_sentence"):
+            lines.append(f"- 内容判断：{content_context['one_sentence']}")
+        if content_context.get("content_type"):
+            lines.append(f"- 内容类型：{' · '.join(content_context['content_type'])}")
+        ip_context = content_context.get("ip_context") or {}
+        if ip_context.get("works"):
+            lines.append(f"- 作品/IP：{'、'.join(ip_context['works'])}")
+        if ip_context.get("characters"):
+            lines.append(f"- 角色：{'、'.join(ip_context['characters'])}")
+        if ip_context.get("people"):
+            lines.append(f"- 人物：{'、'.join(ip_context['people'])}")
+        if content_context.get("content_tone"):
+            lines.append(f"- 内容基调：{'、'.join(content_context['content_tone'])}")
+        lines.append("")
     lines.append(f"这条视频大约 {source.get('duration_sec')} 秒，检测到约 {batch['total_shots_detected']} 个镜头。")
     if batch_start is not None:
         verb = "计划拆" if batch.get("detail_mode") == "structure_only" else "详细拆"
@@ -745,17 +967,23 @@ def render_markdown(payload: dict[str, Any]) -> str:
         lines.append(f"- 已生成 {frame_count} 张首/中/尾证据帧，均带水印和时间码。")
         manifest_path = evidence.get("evidence_manifest")
         if manifest_path:
-            manifest_file = Path(manifest_path)
-            lines.append(f"- 证据清单：`{manifest_file}`")
+            lines.append(f"- 证据清单：`{manifest_path}`")
             contact_name = evidence.get("evidence_contact_sheet")
             if contact_name:
-                lines.append(f"- 证据联系表：`{manifest_file.parent / contact_name}`")
+                lines.append(f"- 证据联系表：`{contact_name}`")
+    elif evidence.get("timecode_frames") == "partial":
+        covered = evidence.get("timecode_shots_covered") or 0
+        expected = evidence.get("timecode_shots_expected") or 0
+        lines.append(f"- 时间码证据只覆盖 {covered}/{expected} 个本批镜头；当前草稿不能作为完整交接包。")
     else:
         lines.append("- 本轮未提供时间码证据包；文字结论仍可阅读，但跨模型交接的追溯性不完整。")
     lines.extend(["", verdict["headline"], "", "## 能不能做", ""])
     lines.append(f"当前判断：**{status_labels.get(verdict['status'], verdict['status'])}**。")
     lines.append("能复用的部分：")
     lines.extend(f"- {item}" for item in verdict["can_reuse"])
+    asset_advice = verdict.get("asset_recommendation") or []
+    if asset_advice:
+        lines.extend(["", "复刻前建议准备：", *[f"- {item}" for item in asset_advice]])
 
     if batch.get("detail_mode") == "structure_only":
         lines.extend([
@@ -855,11 +1083,21 @@ def render_handoff(payload: dict[str, Any]) -> str:
         f"- 时间范围：约 {batch.get('covered_start_sec')}–{batch.get('covered_end_sec')} 秒",
         f"- 全片镜头数：约 {batch.get('total_shots_detected')} 个",
         f"- 草稿阶段：{handoff.get('draft_status', 'first_pass_reverse_engineering')}",
-        f"- 时间码证据：{'provided' if (payload.get('evidence') or {}).get('timecode_frames') == 'provided' else 'absent'}",
-        "",
-        "## 首批锚点",
+        f"- 时间码证据：{(payload.get('evidence') or {}).get('timecode_frames', 'absent')}",
         "",
     ]
+    content_context = (payload.get("source") or {}).get("content_context") or {}
+    if content_context:
+        lines.extend(["## 内容上下文", ""])
+        if content_context.get("one_sentence"):
+            lines.append(f"- 内容判断：{content_context['one_sentence']}")
+        if content_context.get("content_type"):
+            lines.append(f"- 内容类型：{' · '.join(content_context['content_type'])}")
+        lines.append("")
+    lines.extend([
+        "## 首批锚点",
+        "",
+    ])
     first_transition = anchors.get("first_transition")
     first_movement = anchors.get("first_camera_movement")
     anchor_prefix = "本批首个" if batch.get("batch_index", 1) > 1 else "首个"
@@ -943,6 +1181,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scan-json", required=True, type=Path)
     parser.add_argument("--context-json", type=Path, default=None)
+    parser.add_argument("--content-analysis-json", type=Path, default=None, help="Content overview from general-video-analysis")
+    parser.add_argument("--allow-content-mismatch", action="store_true", help="Allow professional analysis when base routing says comic_aigc_led=false")
     parser.add_argument("--mechanics-json", type=Path, default=None, help="Output from media_mechanics.py")
     parser.add_argument("--evidence-json", type=Path, default=None, help="Output from evidence_frames.py")
     parser.add_argument("--out", required=True, type=Path)
@@ -955,6 +1195,8 @@ def main() -> int:
         context = load_json(args.context_json)
         if args.context_json is not None:
             validate_context(context)
+        content_context = normalize_content_context(load_json(args.content_analysis_json))
+        validate_content_route(content_context, context, args.allow_content_mismatch)
         mechanics = load_json(args.mechanics_json)
         evidence = load_json(args.evidence_json)
         if args.evidence_json is not None:
@@ -967,6 +1209,7 @@ def main() -> int:
             mechanics,
             evidence,
             args.evidence_json,
+            content_context,
         )
         (args.out / "professional_analysis.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         (args.out / "professional_report.md").write_text(render_markdown(payload), encoding="utf-8")

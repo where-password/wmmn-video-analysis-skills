@@ -2,7 +2,7 @@
 
 This directory defines how to validate the professional analysis skill against human-labeled real videos.
 
-The package intentionally does **not** ship a claimed accuracy score. A valid benchmark requires human annotations and multiple real clips. Automated predictions must never be reused as their own ground truth.
+The package intentionally does **not** ship a claimed accuracy score. Community-labeled review is still pending. A valid benchmark requires human annotations and multiple real clips. Automated predictions must never be reused as their own ground truth.
 
 ## Required coverage
 
@@ -38,3 +38,11 @@ python scripts/evaluate_benchmark.py \
 - cross-variant stability.
 
 A report with fewer than `--min-cases` is marked `provisional` and must not be presented as a formal accuracy claim.
+
+## Human labeling
+
+See [human-labeling.md](human-labeling.md) for the detailed labeling protocol and acceptance rules.
+
+## Community contribution
+
+A ready-to-post Chinese call for community-labeled AIGC/comic samples is available at [community-call.md](community-call.md). The maintainer does not need to perform all labeling before accepting community cases.
