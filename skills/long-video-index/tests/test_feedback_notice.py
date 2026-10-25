@@ -15,6 +15,8 @@ class FeedbackNoticeTests(unittest.TestCase):
         self.assertIn("抖音私信", notice)
         self.assertIn("我密码呢", notice)
         self.assertIn("wmmn · 我密码呢", notice)
+        self.assertIn("测试提醒", notice)
+        self.assertIn("`我密码呢`", notice)
         self.assertIn("COMMUNITY.md", notice)
         self.assertIn("Cookie", notice)
         self.assertIn("API Key", notice)

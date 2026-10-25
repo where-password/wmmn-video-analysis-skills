@@ -96,6 +96,7 @@ class ScanUnitTests(unittest.TestCase):
         self.assertIn("不保证完全准确", notice)
         self.assertIn("我密码呢", notice)
         self.assertIn("wmmn · 我密码呢", notice)
+        self.assertIn("`我密码呢`", notice)
 
     def test_first_run_notice_is_appended_once_per_installation(self):
         with tempfile.TemporaryDirectory() as temp:

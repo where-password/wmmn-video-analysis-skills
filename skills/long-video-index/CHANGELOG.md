@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.6 - 2026-10-26
+
+- State clearly in the repository and first-run notice that Long Video Index is a limited public beta.
+- Request successful and failed test reports across transcript formats, ASR providers, corpus sizes, operating systems, and agent hosts.
+- Protect the Douyin nickname with inline code so browser auto-translation does not alter it.
+
 ## 0.3.5 - 2026-10-26
 
 - Show the visible `wmmn · 我密码呢` watermark only in the first successful user-facing audit, locate, or query output.

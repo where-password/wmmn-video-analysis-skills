@@ -1,6 +1,6 @@
 {
   "name": "long-video-index",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "role": "Multi-episode transcript corpus, evidence retrieval, locator, and optional alias mention index",
   "entrypoint": {
     "command": "python",

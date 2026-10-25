@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.13 - 2026-10-26
+
+- Wrap the Douyin nickname in inline code so browser auto-translation does not change it into a translated phrase.
+
 ## 0.2.12 - 2026-10-26
 
 - Show the visible `wmmn · 我密码呢` watermark only in the first successful user-facing overview.

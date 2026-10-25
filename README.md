@@ -7,19 +7,19 @@
 
 **先看视频讲了什么，再按内容和个人需求选择更专业的分析方向。**
 
-wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code, and compatible agent hosts. The project is a public beta; evidence contracts and runtime behavior are still being validated with real videos.
+wmmn (`我密码呢`) builds focused video-analysis Skills for Codex, Claude Code, and compatible agent hosts. The project is a public beta; evidence contracts and runtime behavior are still being validated with real videos.
 
 ## Before you start
 
 - **Video link:** Use the desktop web URL of the exact target video. On Douyin, open the video from History, Likes, or Favorites and copy the in-video share link. On Bilibili, use the specific video page URL. Do not use a homepage, recommendation feed, search result, or screenshot as the source.
-- **Feedback:** Questions and suggestions are welcome in the forum thread, GitHub Issues, or a Douyin DM to **我密码呢**. See [COMMUNITY.md](COMMUNITY.md) for the full feedback and privacy guide.
+- **Feedback:** Questions and suggestions are welcome in the forum thread, GitHub Issues, or a Douyin DM to `我密码呢`. See [COMMUNITY.md](COMMUNITY.md) for the full feedback and privacy guide.
 - **Compatibility:** WorkBuddy, Doubao Work, and other agent hosts have not yet been tested. You can try them; please report successful or failed runs on GitHub.
 - **Copyright responsibility:** This project provides analysis tooling only and does not grant rights to source videos. Analyze only media you are authorized to access. Results are for personal study, research, and discussion; organizational or commercial use requires the user to verify copyright, licensing, and compliance. The author is not responsible for third-party use of videos or results.
 
 **中文使用提醒：**
 
 - 请提供电脑网页版的目标视频链接。抖音建议从历史记录、点赞或收藏进入目标视频后复制链接；B站请使用具体视频页链接。主页、推荐流、搜索结果和截图不能稳定确定视频。
-- 有问题或建议，欢迎在论坛回帖、GitHub Issues 或抖音私信「我密码呢」反馈；完整说明见 [COMMUNITY.md](COMMUNITY.md)。
+- 有问题或建议，欢迎在论坛回帖、GitHub Issues 或抖音私信 `我密码呢` 反馈；完整说明见 [COMMUNITY.md](COMMUNITY.md)。
 - WorkBuddy、豆包工作版等 Agent 尚未测试；可以先尝试，成功或失败都欢迎反馈到 GitHub。
 
 ## Usage and Copyright / 使用与版权声明
@@ -30,13 +30,18 @@ wmmn · 我密码呢 builds focused video-analysis Skills for Codex, Claude Code
 
 See [DISCLAIMER.md](DISCLAIMER.md) for the full disclaimer. This is not legal advice.
 
+> [!WARNING]
+> **Long Video Index is a limited public beta.** It has not yet been tested across all transcript formats, ASR providers, corpus sizes, operating systems, and agent hosts. Please report successful and failed cases through the forum, GitHub Issues, or Douyin DM so the retrieval and compatibility behavior can be improved.
+>
+> **Long Video Index 仍是有限公开测试版。** 尚未覆盖所有逐字稿格式、ASR 来源、语料规模、操作系统和 Agent 宿主。欢迎通过论坛、GitHub Issues 或抖音私信 `我密码呢` 反馈成功与失败案例，帮助继续优化检索和兼容性。
+
 ## Skills
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.12 working version |
+| [general-video-analysis](skills/general-video-analysis) | Broad content overview: one-sentence judgment, summary paragraph, type, theme, structured IP/people recognition, tone, optional targets, and soft next steps | 0.2.13 working version |
 | [professional-video-analysis](skills/professional-video-analysis) | Bounded production reverse-engineering, shot planning, evidence frames, prompts, and handoff | 0.4.5 working version |
-| [long-video-index](skills/long-video-index) | Multi-episode transcript corpus, bounded evidence retrieval, timestamp lookup, and optional alias mention index | 0.3.5 working version |
+| [long-video-index](skills/long-video-index) | Multi-episode transcript corpus, bounded evidence retrieval, timestamp lookup, and optional alias mention index | 0.3.6 public beta · limited testing |
 
 The Skills are designed around separate jobs. The base Skill analyzes content. Professional analysis and long-video indexing are optional directions that users can choose independently.
 
@@ -166,7 +171,7 @@ The full long-video feedback statement is in [COMMUNITY.md](COMMUNITY.md). The s
 
 仅发布于刺猬猫平台。喜欢恋爱喜剧的朋友可以支持一下；不喜欢也欢迎直接吐槽。
 
-作者抖音：我密码呢
+作者抖音：`我密码呢`
 
 ## Attribution and license
 
@@ -176,6 +181,6 @@ MIT License. See [LICENSE](LICENSE).
 
 Copyright (c) 2026 wmmn (where-password).
 
-Author Douyin: **我密码呢**. Questions and feedback can be sent by DM; reproducible technical reports are also welcome in GitHub Issues.
+Author Douyin: `我密码呢`. Questions and feedback can be sent by DM; reproducible technical reports are also welcome in GitHub Issues.
 
-作者抖音：**我密码呢**。有问题可以私信反馈，也欢迎在 GitHub Issues 留下可复现信息。
+作者抖音：`我密码呢`。有问题可以私信反馈，也欢迎在 GitHub Issues 留下可复现信息。

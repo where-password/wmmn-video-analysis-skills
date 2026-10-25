@@ -1,5 +1,10 @@
 # Long Video Index
 
+> [!WARNING]
+> This Skill is a limited public beta. It has not yet been tested across all transcript formats, ASR providers, corpus sizes, operating systems, and agent hosts. Please report successful and failed cases through the forum, GitHub Issues, or Douyin DM `我密码呢`.
+>
+> **Long Video Index 仍是有限公开测试版。** 尚未覆盖所有逐字稿格式、ASR 来源、语料规模、操作系统和 Agent 宿主。欢迎反馈成功与失败案例。
+
 一个只做长视频索引、定位和证据链的 Skill。
 
 它消费**已有的带时间码逐字稿**，回答：
